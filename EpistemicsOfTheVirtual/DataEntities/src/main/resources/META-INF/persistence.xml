@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="http://xmlns.jcp.org/xml/ns/persistence" version="2.1">
+
+    <persistence-unit name="BeliefModelPersistence">
+        <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+
+        <class>selemca.epistemics.data.entity.Association</class>
+        <class>selemca.epistemics.data.entity.AssociationMeta</class>
+        <class>selemca.epistemics.data.entity.Concept</class>
+        <class>selemca.epistemics.data.entity.ConceptMeta</class>
+        <class>selemca.epistemics.data.entity.OwnState</class>
+        <!--<exclude-unlisted-classes>false</exclude-unlisted-classes>-->
+    </persistence-unit>
+</persistence>
