@@ -11,7 +11,7 @@
     <modules>
         <module>Engine</module>
         <module>EngineDeriver</module>
-        <module>metaphorProcessing</module>
+        <module>MetaphorProcessing</module>
         <module>API</module>
         <module>Registry</module>
         <module>WebApp</module>
