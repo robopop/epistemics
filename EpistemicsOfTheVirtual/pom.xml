@@ -6,7 +6,7 @@
 
     <groupId>selemca</groupId>
     <artifactId>epistemics-pom</artifactId>
-    <version>1.2</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 

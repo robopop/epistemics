@@ -10,9 +10,18 @@ BIN="$(cd "$(dirname "$0")" ; pwd)"
 BUILD="$(dirname "${BIN}")"
 SRC="$(dirname "${BUILD}")"
 PROJECT="$(dirname "${SRC}")"
+DATA="${PROJECT}/data"
+ETC="${DATA}/etc"
 
-VERSION="$(cd "${PROJECT}" ; mvn help:evaluate -Dexpression=project.version | grep -v '^[[]')"
+VERSION="$(cd "${PROJECT}" ; mvn help:evaluate -Dexpression=project.version | sed -e '/[[]/d' | tr 'A-Z' 'a-z')"
 log "VERSION=[${VERSION}]"
+
+mkdir -p "${ETC}"
+cat > "${ETC}/last-version.sh" <<EOT
+#!/usr/bin/false
+
+VERSION='${VERSION}'
+EOT
 
 (
     cd "${BUILD}/docker"
