@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
@@ -24,16 +25,17 @@ import javax.ws.rs.core.MediaType;
 import java.util.*;
 import java.util.logging.Logger;
 
-
 @RestController
-@RequestMapping("/epistemics")
+@RequestMapping(BeliefSystemRestController.URL_PREFIX)
 public class BeliefSystemRestController {
-    private static final String SERVLET_ASSOCIATION = "/association";
-    private static final String SERVLET_ASSOCIATIONMETA = "/associationmeta";
-    private static final String SERVLET_CONCEPT = "/concept";
-    private static final String SERVLET_CONTEXT = "/context";
-    private static final String SERVLET_CONTEXTS = "/contexts";
-    private static final String SERVLET_CONCEPTMETA = "/conceptmeta";
+    protected static final String URL_PREFIX = "/epistemics";
+    protected static final String SERVLET_ASSOCIATION = "/association";
+    protected static final String SERVLET_ASSOCIATIONMETA = "/associationmeta";
+    protected static final String SERVLET_CONCEPT = "/concept";
+    protected static final String SERVLET_CONTEXT = "/context";
+    protected static final String SERVLET_CONTEXTS = "/contexts";
+    protected static final String SERVLET_CONCEPTMETA = "/conceptmeta";
+    protected static final String PARAM_CONCEPT_ID = "conceptId";
 
     @Autowired
     private ConceptRepository conceptRepository;
@@ -54,7 +56,8 @@ public class BeliefSystemRestController {
      * CONCEPT
      */
     @RequestMapping(value = SERVLET_CONCEPT, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-    public List<Concept> listConcepts(@PathParam("conceptId") String conceptId) {
+    @ResponseBody
+    public List<Concept> listConcepts(@PathParam(PARAM_CONCEPT_ID) String conceptId) {
         List<Concept> concepts = new ArrayList<>();
         if (conceptId != null) {
             Optional<Concept> conceptOptional = conceptRepository.findOne(conceptId);
@@ -86,7 +89,7 @@ public class BeliefSystemRestController {
      * CONCEPT META
      */
     @RequestMapping(value = SERVLET_CONCEPTMETA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-    public List<ConceptMeta> listConceptMetas(@PathParam("conceptId") String conceptId) {
+    public List<ConceptMeta> listConceptMetas(@PathParam(PARAM_CONCEPT_ID) String conceptId) {
         List<ConceptMeta> conceptMetas = new ArrayList<>();
         if (conceptId != null) {
             Optional<Concept> conceptOptional = conceptRepository.findOne(conceptId);
@@ -118,7 +121,7 @@ public class BeliefSystemRestController {
      * ASSOCIATION
      */
     @RequestMapping(value = SERVLET_ASSOCIATION, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-    public List<Association> listAssociations(@PathParam("conceptId") String conceptId) {
+    public List<Association> listAssociations(@PathParam(PARAM_CONCEPT_ID) String conceptId) {
         List<Association> result = new ArrayList<>();
         if (conceptId != null) {
             Optional<Concept> conceptOptional = conceptRepository.findOne(conceptId);
@@ -158,7 +161,7 @@ public class BeliefSystemRestController {
      * ASSOCIATION META
      */
     @RequestMapping(value = SERVLET_ASSOCIATIONMETA, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
-    public List<AssociationMeta> listAssociationMetas(@PathParam("concept1Id") String concept1Id, @PathParam("concept2Id") String concept2Id) {
+    public List<AssociationMeta> listAssociationMetas(@PathParam(PARAM_CONCEPT_ID + "1") String concept1Id, @PathParam(PARAM_CONCEPT_ID + "2") String concept2Id) {
         List<AssociationMeta> result = new ArrayList<>();
         if (concept1Id != null && concept2Id != null) {
             Optional<Concept> concept1Optional = conceptRepository.findOne(concept1Id);

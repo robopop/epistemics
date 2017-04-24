@@ -1,0 +1,6 @@
+.idea
+*.iml
+target
+/data
+/derby.log
+/src/build/docker/*.war
