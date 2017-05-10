@@ -13,6 +13,9 @@ public class SelemcaHome {
     private static final String SELEMCA_LOCATION_ENV = "SELEMCA_HOME";
     public static File getSelemcaHome() {
         String selemcaLocation = System.getenv(SELEMCA_LOCATION_ENV);
+        if (selemcaLocation == null) {
+            selemcaLocation = System.getProperty(SELEMCA_LOCATION_ENV);
+        }
         if (selemcaLocation != null) {
             File selemcaHome = new File(selemcaLocation);
             if (selemcaHome.exists()) {

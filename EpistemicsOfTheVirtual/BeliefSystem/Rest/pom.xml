@@ -65,6 +65,14 @@
             <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.springfox</groupId>
+            <artifactId>springfox-swagger-ui</artifactId>
+        </dependency>
+        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
         </dependency>
@@ -91,7 +99,7 @@
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-jdk14</artifactId>
+            <artifactId>slf4j-simple</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -103,11 +111,36 @@
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.2.3.v20140905</version>
+                <configuration>
+                    <stopKey>alpha</stopKey>
+                    <stopPort>8001</stopPort>
+                    <useTestScope>true</useTestScope>
+                    <systemProperties>
+                        <systemProperty>
+                            <name>SELEMCA_HOME</name>
+                            <value>${project.basedir}/src/test/resources/selemca_home</value>
+                        </systemProperty>
+                        <systemProperty>
+                            <name>org.slf4j.simpleLogger.defaultLogLevel</name>
+                            <value>debug</value>
+                        </systemProperty>
+                    </systemProperties>
+                </configuration>
             </plugin>
             <plugin>
                 <artifactId>maven-war-plugin</artifactId>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.20</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
                 </configuration>
             </plugin>
         </plugins>
