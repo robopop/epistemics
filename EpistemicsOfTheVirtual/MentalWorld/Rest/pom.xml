@@ -3,13 +3,13 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <artifactId>epistemics-beliefsystem-pom</artifactId>
+        <artifactId>epistemics-mentalworld</artifactId>
         <groupId>selemca</groupId>
         <version>1.3.0-SNAPSHOT</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>epistemics-beliefsystem-rest</artifactId>
+    <artifactId>epistemics-mentalworld-rest</artifactId>
     <packaging>war</packaging>
 
     <dependencies>
@@ -92,20 +92,10 @@
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.derby</groupId>
-            <artifactId>derby</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-simple</artifactId>
-            <scope>test</scope>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>BeliefSystem</finalName>
+        <finalName>MentalWorldRest</finalName>
         <plugins>
             <plugin>
                 <groupId>org.eclipse.jetty</groupId>
@@ -140,7 +130,6 @@
                 <configuration>
                     <systemPropertyVariables>
                         <org.slf4j.simpleLogger.defaultLogLevel>debug</org.slf4j.simpleLogger.defaultLogLevel>
-                        <derby.stream.error.file>${project.build.directory}/derby.log</derby.stream.error.file>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>

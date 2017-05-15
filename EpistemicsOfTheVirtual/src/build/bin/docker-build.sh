@@ -28,8 +28,9 @@ EOT
 
     cp "${PROJECT}/BeliefSystem/Rest/target/BeliefSystem.war" "epistemics-beliefsystem-rest.war"
     cp "${PROJECT}/BeliefSystem/BeliefSystemAdmin/target/BeliefSystemAdmin.war" "epistemics-beliefsystem-webadmin.war"
+    cp "${PROJECT}/MentalWorld/Rest/target/MentalWorldRest.war" "epistemics-mentalworld-rest.war"
     cp "${PROJECT}/MentalWorld/WebApp/target/MentalWorldApp.war" "epistemics-mentalworld-webapp.war"
     cp "${PROJECT}/MentalWorld/MentalWorldAdmin/target/MentalWorldAdmin.war" "epistemics-mentalworld-webadmin.war"
 
-	docker build -t "jeroenvm/epistemics:${VERSION}" .
+    docker build -t "jeroenvm/epistemics:${VERSION}" .
 )

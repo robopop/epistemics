@@ -9,6 +9,7 @@
         <class>selemca.epistemics.data.entity.Concept</class>
         <class>selemca.epistemics.data.entity.ConceptMeta</class>
         <class>selemca.epistemics.data.entity.OwnState</class>
+        <class>selemca.epistemics.data.entity.Setting</class>
         <!--<exclude-unlisted-classes>false</exclude-unlisted-classes>-->
     </persistence-unit>
 </persistence>

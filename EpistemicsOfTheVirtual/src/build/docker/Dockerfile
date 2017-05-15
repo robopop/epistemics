@@ -7,5 +7,6 @@ ENV	ARTIFACTORY_URL http://artifactory:8081/artifactory/libs-release-local/selem
 
 ADD	epistemics-beliefsystem-rest.war /usr/local/tomcat/webapps/beliefsystem-rest.war
 ADD	epistemics-beliefsystem-webadmin.war /usr/local/tomcat/webapps/beliefsystem-webadmin.war
+ADD	epistemics-mentalworld-rest.war /usr/local/tomcat/webapps/mentalworld-rest.war
 ADD	epistemics-mentalworld-webapp.war /usr/local/tomcat/webapps/mentalworld-webapp.war
 ADD	epistemics-mentalworld-webadmin.war /usr/local/tomcat/webapps/mentalworld-webadmin.war
