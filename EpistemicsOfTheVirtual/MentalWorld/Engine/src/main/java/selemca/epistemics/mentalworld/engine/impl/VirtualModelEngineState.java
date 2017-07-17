@@ -25,16 +25,20 @@ import selemca.epistemics.mentalworld.engine.node.InsecurityDeriverNode;
 import selemca.epistemics.mentalworld.engine.node.IntegratorDeviationDeriverNode;
 import selemca.epistemics.mentalworld.engine.node.PersistenceDeriverNode;
 import selemca.epistemics.mentalworld.engine.node.ReassuranceDeriverNode;
+import selemca.epistemics.mentalworld.engine.accept.Engine;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import selemca.epistemics.mentalworld.registry.DeriverNodeProviderRegistry;
 import selemca.epistemics.mentalworld.registry.MetaphorProcessorRegistry;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.BiFunction;
 
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
 
@@ -69,8 +73,25 @@ class VirtualModelEngineState {
     public VirtualModelEngineState(Concept context, Set<String> observationFeatures, MentalWorldEngine.Logger logger) {
         this.workingMemory = new WorkingMemory();
         workingMemory.setObservationFeatures(observationFeatures);
+        createEngineSettings(applicationSettings, "engine", Engine.class)
+                .map((engineSettings) -> {
+                    workingMemory.setEngineSettings(engineSettings);
+                    return null;
+                });
         this.logger = logger;
         beliefSystemGraph = getGraph();
+    }
+
+    public VirtualModelEngineState(Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
+        this.workingMemory = new WorkingMemory();
+        workingMemory.setObservationFeatures(observationFeatures);
+        workingMemory.setEngineSettings(engineSettings);
+        this.logger = logger;
+        beliefSystemGraph = getGraph();
+    }
+
+    public boolean isObservationAccepted() {
+        return observationAccepted;
     }
 
     protected void acceptObservation() {
@@ -278,4 +299,47 @@ class VirtualModelEngineState {
         return Optional.ofNullable(result);
     }
 
+    private <T> Optional<T> createEngineSettings(Configuration applicationSettings, String path, Class<T> type) {
+        if (type == null || type == Void.class) {
+            return Optional.empty();
+        } else if (type == Double.class) {
+            return getValue(applicationSettings, path, Configuration::getDouble, type);
+        } else if (type == Integer.class) {
+            return getValue(applicationSettings, path, Configuration::getInt, type);
+        } else if (type == String.class) {
+            return getValue(applicationSettings, path, Configuration::getString, type);
+        } else {
+            final T result;
+            try {
+                result = type.newInstance();
+            } catch (InstantiationException | IllegalAccessException e) {
+                logger.warning(String.format("Could not create setting %s of type %s", path, type));
+                return Optional.empty();
+            }
+            for (final Method method : type.getMethods()) {
+                if (method.getParameterCount() == 1 && method.getName().startsWith("set")) {
+                    String propertyName = method.getName().substring(3).toLowerCase();
+                    Class<?> propertyType = method.getParameterTypes()[0];
+                    String propertyPath = path + "." + propertyName;
+                    createEngineSettings(applicationSettings, propertyPath, propertyType).map((value -> {
+                        try {
+                            method.invoke(result, value);
+                        } catch (InvocationTargetException | IllegalAccessException e) {
+                            logger.warning(String.format("Could not set property %s to %s", propertyPath, value));
+                        }
+                        return null;
+                    }));
+                }
+            }
+            return Optional.of(result);
+        }
+    }
+
+    private <T> Optional<T> getValue(Configuration configuration, String path, BiFunction<Configuration,String,?> getter, Class<T> type) {
+        if (configuration.containsKey(path)) {
+            return Optional.of(type.cast(getter.apply(configuration, path)));
+        } else {
+            return Optional.empty();
+        }
+    }
 }

@@ -15,6 +15,11 @@
     <dependencies>
         <dependency>
             <groupId>selemca</groupId>
+            <artifactId>epistemics-mentalworld-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>selemca</groupId>
             <artifactId>epistemics-beliefsystem-model</artifactId>
             <version>${project.version}</version>
         </dependency>

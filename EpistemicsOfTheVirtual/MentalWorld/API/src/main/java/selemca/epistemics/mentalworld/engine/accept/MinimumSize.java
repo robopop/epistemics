@@ -1,4 +1,4 @@
-package selemca.epistemics.mentalworld.engine.setting.engine;
+package selemca.epistemics.mentalworld.engine.accept;
 
 public class MinimumSize {
     private Integer absolute;

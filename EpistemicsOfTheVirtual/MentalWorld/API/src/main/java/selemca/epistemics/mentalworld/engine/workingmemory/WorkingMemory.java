@@ -8,6 +8,7 @@ package selemca.epistemics.mentalworld.engine.workingmemory;
 
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
+import selemca.epistemics.mentalworld.engine.accept.Engine;
 
 import java.util.Set;
 
@@ -18,6 +19,7 @@ public class WorkingMemory {
     private Set<String> observationFeatures;
     private CategoryMatch categoryMatch = null;
     private Concept newContext;
+    private Engine engineSettings;
 
     public Set<String> getObservationFeatures() {
         return observationFeatures;
@@ -41,5 +43,13 @@ public class WorkingMemory {
 
     public void setNewContext(Concept newContext) {
         this.newContext = newContext;
+    }
+
+    public Engine getEngineSettings() {
+        return engineSettings;
+    }
+
+    public void setEngineSettings(Engine engineSettings) {
+        this.engineSettings = engineSettings;
     }
 }

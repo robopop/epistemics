@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
+import selemca.epistemics.mentalworld.engine.accept.Engine;
 
 import java.util.*;
 
@@ -34,5 +35,17 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
         }
     }
 
+    @Override
+    public boolean acceptObservation(Set<String> observationFeatures, Engine engineSettings, Logger logger) {
+        Optional<Concept> contextOptional = beliefModelService.getContext();
+        if (contextOptional.isPresent()) {
+            VirtualModelEngineState virtualModelEngineState = new VirtualModelEngineState(contextOptional.get(), observationFeatures, engineSettings, logger);
 
+            virtualModelEngineState.acceptObservation();
+            return virtualModelEngineState.isObservationAccepted();
+        } else {
+            logger.info("There is no context. We are mentally blind");
+            return false;
+        }
+    }
 }

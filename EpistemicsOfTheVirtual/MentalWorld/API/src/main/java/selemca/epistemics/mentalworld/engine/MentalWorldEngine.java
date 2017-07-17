@@ -6,13 +6,18 @@
  */
 package selemca.epistemics.mentalworld.engine;
 
+import selemca.epistemics.mentalworld.engine.accept.Engine;
+
 import java.util.Set;
 
 /**
  * Created by henrizwols on 24-02-15.
  */
 public interface MentalWorldEngine {
+
     void acceptObservation(Set<String> observationFeatures, Logger logger);
+
+    boolean acceptObservation(Set<String> observationFeatures, Engine engineSettings, Logger logger);
 
     public interface Logger {
 
