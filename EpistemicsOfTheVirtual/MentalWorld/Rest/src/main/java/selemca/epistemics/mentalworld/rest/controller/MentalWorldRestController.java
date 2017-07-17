@@ -6,6 +6,7 @@
  */
 package selemca.epistemics.mentalworld.rest.controller;
 
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,9 +37,9 @@ public class MentalWorldRestController {
     /*
      * CONCEPT
      */
-    @RequestMapping(value = SERVLET_SETTING, method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
+    @RequestMapping(value = SERVLET_SETTING + "/{" + PARAM_SETTING_ID + "}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON)
     @ResponseBody
-    public List<Setting> listSettings(@PathParam(PARAM_SETTING_ID) String settingId) {
+    public List<Setting> listSettings(@ApiParam(value = PARAM_SETTING_ID, required = false) @PathParam(PARAM_SETTING_ID) String settingId) {
         List<Setting> settings = new ArrayList<>();
         if (settingId != null) {
             Optional<Setting> settingOptional = settingRepository.findOne(settingId);

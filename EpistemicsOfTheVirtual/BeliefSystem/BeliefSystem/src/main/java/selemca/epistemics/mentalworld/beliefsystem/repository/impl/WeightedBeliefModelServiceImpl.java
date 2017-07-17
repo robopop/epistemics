@@ -54,10 +54,10 @@ public class WeightedBeliefModelServiceImpl implements WeightedBeliefModelServic
     private Set<Association> getWeightedVicinity(Graph<Concept, Association> beliefSystemGraph, Concept concept, double minimumTruthValue) {
         double maxDistance = convertTruthValueToWeight(minimumTruthValue);
 
-        DijkstraDistance dijkstraDistance = new DijkstraDistance<Concept, Association>(beliefSystemGraph, ASSOCIATION_WEIGHT_TRANSFORMER);
+        DijkstraDistance<Concept, Association> dijkstraDistance = new DijkstraDistance<>(beliefSystemGraph, ASSOCIATION_WEIGHT_TRANSFORMER);
         dijkstraDistance.setMaxDistance(maxDistance);
         Map<Concept, Number> distanceMap = dijkstraDistance.getDistanceMap(concept);
-        Set<Association> associations = new HashSet<Association>();
+        Set<Association> associations = new HashSet<>();
         for (Concept related : distanceMap.keySet()) {
             double weight = distanceMap.get(related).doubleValue();
             associations.add(new Association(concept, related, convertWeightToTruthValue(weight)));
@@ -68,7 +68,7 @@ public class WeightedBeliefModelServiceImpl implements WeightedBeliefModelServic
     private Set<Concept> getWeightedVicinityConcepts(Graph<Concept, Association> beliefSystemGraph, Concept concept, double minimumTruthValue) {
         double maxDistance = convertTruthValueToWeight(minimumTruthValue);
 
-        DijkstraDistance dijkstraDistance = new DijkstraDistance<Concept, Association>(beliefSystemGraph, ASSOCIATION_WEIGHT_TRANSFORMER);
+        DijkstraDistance<Concept, Association> dijkstraDistance = new DijkstraDistance<>(beliefSystemGraph, ASSOCIATION_WEIGHT_TRANSFORMER);
         dijkstraDistance.setMaxDistance(maxDistance);
         return dijkstraDistance.getDistanceMap(concept).keySet();
     }

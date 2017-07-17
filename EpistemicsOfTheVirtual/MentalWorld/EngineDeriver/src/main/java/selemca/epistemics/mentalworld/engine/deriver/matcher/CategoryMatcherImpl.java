@@ -8,7 +8,6 @@ package selemca.epistemics.mentalworld.engine.deriver.matcher;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
 import edu.uci.ics.jung.graph.Graph;
-import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.Association;
@@ -24,8 +23,6 @@ import java.util.*;
 
 @Component("categoryMatcher.default")
 public class CategoryMatcherImpl implements CategoryMatcher {
-    @Autowired
-    private Configuration applicationSettings;
 
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
@@ -33,7 +30,7 @@ public class CategoryMatcherImpl implements CategoryMatcher {
 
     @Override
     public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Set<String> features, MentalWorldEngine.Logger logger) {
-        return findMatch(beliefSystemGraph, features, Collections.EMPTY_LIST, logger);
+        return findMatch(beliefSystemGraph, features, Collections.emptyList(), logger);
     }
 
     @Override
@@ -63,9 +60,9 @@ public class CategoryMatcherImpl implements CategoryMatcher {
 
     private Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Collection<Concept> candidateMatches, Set<Concept> featureConcepts, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger) {
         RealityCheck realityCheck = getRealityCheck();
-        DijkstraShortestPath dijkstraDistance = new DijkstraShortestPath<Concept, Association>(beliefSystemGraph);
+        DijkstraShortestPath<Concept, Association> dijkstraDistance = new DijkstraShortestPath<>(beliefSystemGraph);
 
-        SortedSet<CategoryMatchImpl> matches = new TreeSet<CategoryMatchImpl>(new CategoryScoreComparator());
+        SortedSet<CategoryMatchImpl> matches = new TreeSet<>(new CategoryScoreComparator());
         for (Concept cadidateMatch : candidateMatches) {
             if (!precludeConcepts.contains(cadidateMatch.getName())) {
                 matches.add(match(dijkstraDistance, cadidateMatch, featureConcepts, realityCheck));

@@ -40,7 +40,7 @@ class OfferObservationButtonListener implements ClickListener {
 
 	private Set<String> getObservationFeatures() {
 		Set<String> observationFeatures = new HashSet<>();
-		observationFeatures.addAll((Set<String>) observationComponent.getBeliefListSelect().getValue());
+		observationFeatures.addAll(getBeliefListSelectValues());
 		if (observationComponent.getWordnetCheckBox().getValue()) {
 			String newConcept = (String) observationComponent.getWordnetComboBox().getValue();
 			if (newConcept != null) {
@@ -52,4 +52,9 @@ class OfferObservationButtonListener implements ClickListener {
 		}
 		return observationFeatures;
 	}
+
+    @SuppressWarnings("unchecked")
+    private Set<String> getBeliefListSelectValues() {
+        return (Set<String>) observationComponent.getBeliefListSelect().getValue();
+    }
 }

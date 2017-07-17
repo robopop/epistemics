@@ -50,7 +50,7 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
         this.associationRepository = associationRepository;
         insecurityDirectAssociationModificationPercentage = applicationSettings.getInt(INSECURITY_DIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE, INSECURITY_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT);
         insecurityConverseToTarget = applicationSettings.getDouble(INSECURITY_CONVERSE_TO_VALUE, INSECURITY_CONVERSE_TO_VALUE_DEFAULT);
-        this.dijkstraShortestPath = new DijkstraShortestPath(beliefSystemGraph);
+        this.dijkstraShortestPath = new DijkstraShortestPath<>(beliefSystemGraph);
     }
 
     @Override

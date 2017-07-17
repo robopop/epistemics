@@ -39,7 +39,7 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
     private final int reassuranceDirectAssociationModificationPercentage;
     private final int reassuranceOtherAssociationsModificationPercentage;
 
-    private final DijkstraShortestPath dijkstraShortestPath;
+    private final DijkstraShortestPath<Concept, Association> dijkstraShortestPath;
 
     public DefaultReassuranceDeriverNodeImpl(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
@@ -49,7 +49,7 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
         this.associationRepository = associationRepository;
         reassuranceDirectAssociationModificationPercentage = applicationSettings.getInt(REASSURENCE_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE, REASSURENCE_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT);
         reassuranceOtherAssociationsModificationPercentage = applicationSettings.getInt(REASSURENCE_INDIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE, REASSURENCE_INDIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE_DEFAULT);
-        this.dijkstraShortestPath = new DijkstraShortestPath(beliefSystemGraph);
+        this.dijkstraShortestPath = new DijkstraShortestPath<>(beliefSystemGraph);
     }
 
     @Override

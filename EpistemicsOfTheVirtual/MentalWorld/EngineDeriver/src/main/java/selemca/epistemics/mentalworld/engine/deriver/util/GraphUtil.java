@@ -20,18 +20,18 @@ import java.util.Set;
  */
 public class GraphUtil {
     private Set<Concept> getUnweightedVicinity(Graph<Concept, Association> beliefSystemGraph, Concept concept, int maxDistance) {
-        DijkstraDistance dijkstraDistance = new DijkstraDistance<Concept, Association>(beliefSystemGraph);
+        DijkstraDistance<Concept, Association> dijkstraDistance = new DijkstraDistance<>(beliefSystemGraph);
         dijkstraDistance.setMaxDistance(maxDistance);
         return dijkstraDistance.getDistanceMap(concept).keySet();
     }
 
     public List<Association> getUnweightedShortestPath(Graph<Concept, Association> beliefSystemGraph, Concept concept1, Concept concept2) {
-        DijkstraShortestPath<Concept,Association> beliefSystemDSP = new DijkstraShortestPath(beliefSystemGraph);
+        DijkstraShortestPath<Concept,Association> beliefSystemDSP = new DijkstraShortestPath<>(beliefSystemGraph);
         return beliefSystemDSP.getPath(concept1, concept2);
     }
 
     public double getTruthValue(Graph<Concept, Association> beliefSystemGraph, Concept concept1, Concept concept2) {
-        DijkstraShortestPath<Concept,Association> beliefSystemDSP = new DijkstraShortestPath(beliefSystemGraph);
+        DijkstraShortestPath<Concept,Association> beliefSystemDSP = new DijkstraShortestPath<>(beliefSystemGraph);
         return getTruthValue(beliefSystemDSP, concept1, concept2);
     }
 
