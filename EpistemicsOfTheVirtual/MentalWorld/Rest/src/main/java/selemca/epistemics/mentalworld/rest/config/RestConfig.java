@@ -16,14 +16,15 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemConfig;
+import selemca.epistemics.mentalworld.engine.config.EngineConfig;
 import selemca.epistemics.mentalworld.rest.controller.MentalWorldRestController;
 
 import java.io.File;
 import java.util.logging.Logger;
 
 @Configuration
-@Import(BeliefSystemConfig.class)
-@ComponentScan(basePackages = {"selemca.epistemics.mentalworld.rest"})
+@Import({BeliefSystemConfig.class, EngineConfig.class})
+@ComponentScan(basePackages = {"selemca.epistemics.mentalworld.rest", "selemca.epistemics.mentalworld.registry"})
 public class RestConfig {
     private static final String APPLICATION_SETTINGS_FILE = "ServerApplicationSettings.properties";
 

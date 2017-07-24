@@ -20,6 +20,21 @@
         </dependency>
         <dependency>
             <groupId>selemca</groupId>
+            <artifactId>epistemics-mentalworld-engine</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>selemca</groupId>
+            <artifactId>epistemics-mentalworld-engine-deriver</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>selemca</groupId>
+            <artifactId>epistemics-mentalworld-metaphor-processing</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>selemca</groupId>
             <artifactId>epistemics-beliefsystem-model</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -96,6 +111,15 @@
             <groupId>org.skyscreamer</groupId>
             <artifactId>jsonassert</artifactId>
             <scope>test</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-jdk14</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
     </dependencies>
 

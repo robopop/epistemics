@@ -2,14 +2,9 @@ package selemca.epistemics.mentalworld.engine.impl;
 
 import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
-import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
-import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
@@ -27,8 +22,6 @@ import selemca.epistemics.mentalworld.engine.node.PersistenceDeriverNode;
 import selemca.epistemics.mentalworld.engine.node.ReassuranceDeriverNode;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
-import selemca.epistemics.mentalworld.registry.DeriverNodeProviderRegistry;
-import selemca.epistemics.mentalworld.registry.MetaphorProcessorRegistry;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -42,27 +35,9 @@ import java.util.function.BiFunction;
 
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
 
-@Component
 class VirtualModelEngineState {
 
-    @Autowired
-    private BeliefModelService beliefModelService;
-
-    @Autowired
-    MetaphorProcessorRegistry metaphorProcessorRegistry;
-
-    @Autowired
-    DeriverNodeProviderRegistry deriverNodeProviderRegistry;
-
-    @Autowired
-    private ConceptRepository conceptRepository;
-
-    @Autowired
-    private AssociationRepository associationRepository;
-
-    @Autowired
-    private Configuration applicationSettings;
-
+    private final MentalWorldEngineImpl engine;
     private final WorkingMemory workingMemory;
     private final MentalWorldEngine.Logger logger;
     private Map<Class<? extends DeriverNode>, DeriverNode> deriverNodeMap = new HashMap<>();
@@ -70,10 +45,11 @@ class VirtualModelEngineState {
     private final Collection<String> triedConcepts = new ArrayList<>();
     private boolean observationAccepted = false;
 
-    public VirtualModelEngineState(Concept context, Set<String> observationFeatures, MentalWorldEngine.Logger logger) {
+    public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, MentalWorldEngine.Logger logger) {
+        this.engine = engine;
         this.workingMemory = new WorkingMemory();
         workingMemory.setObservationFeatures(observationFeatures);
-        createEngineSettings(applicationSettings, "engine", Engine.class)
+        createEngineSettings(engine.getApplicationSettings(), "engine", Engine.class)
                 .map((engineSettings) -> {
                     workingMemory.setEngineSettings(engineSettings);
                     return null;
@@ -82,7 +58,8 @@ class VirtualModelEngineState {
         beliefSystemGraph = getGraph();
     }
 
-    public VirtualModelEngineState(Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
+    public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
+        this.engine = engine;
         this.workingMemory = new WorkingMemory();
         workingMemory.setObservationFeatures(observationFeatures);
         workingMemory.setEngineSettings(engineSettings);
@@ -96,7 +73,7 @@ class VirtualModelEngineState {
 
     protected void acceptObservation() {
         int categoriesTried = 0;
-        int maximumTraversals = applicationSettings.getInt(MAXIMUM_TRAVERSALS, MentalWorldEngineImpl.MAXIMUM_TRAVERSALS_DEFAULT);
+        int maximumTraversals = engine.getApplicationSettings().getInt(MAXIMUM_TRAVERSALS, MentalWorldEngineImpl.MAXIMUM_TRAVERSALS_DEFAULT);
         while (!observationAccepted && categoriesTried < maximumTraversals) {
             if (!triedConcepts.isEmpty()) {
                 logger.info(String.format("That did not work. Try again. Now exclude %s", triedConcepts));
@@ -107,8 +84,8 @@ class VirtualModelEngineState {
     }
 
     private Graph<Concept, Association> getGraph() {
-        Collection<Concept> concepts = conceptRepository.findAll();
-        Collection<Association> associations = associationRepository.findAll();
+        Collection<Concept> concepts = engine.getConceptRepository().findAll();
+        Collection<Association> associations = engine.getAssociationRepository().findAll();
         return new GraphBuilder(concepts, associations).build();
     }
 
@@ -167,7 +144,7 @@ class VirtualModelEngineState {
     private void declareContext() {
         Concept context = workingMemory.getNewContext();
         logger.info("New context: " + context);
-        beliefModelService.setContext(context.getName());
+        engine.getBeliefModelService().setContext(context.getName());
         categoryMatch();
     }
 
@@ -218,7 +195,7 @@ class VirtualModelEngineState {
     }
 
     private void metaphorProcessing(Association contribution) {
-        Optional<MetaphorProcessor> metaphorProcessorOptional = metaphorProcessorRegistry.getImplementation();
+        Optional<MetaphorProcessor> metaphorProcessorOptional = engine.getMetaphorProcessorRegistry().getImplementation();
         if (metaphorProcessorOptional.isPresent()) {
             MetaphorProcessor.MetaphorAssesment metaphorAssesment = metaphorProcessorOptional.get().assesRelation(contribution.getConcept1(), contribution.getConcept2());
             switch (metaphorAssesment) {
@@ -287,7 +264,7 @@ class VirtualModelEngineState {
         DeriverNode result = deriverNodeMap.get(deliverNodeClass);
 
         if (result == null) {
-            Optional<DeriverNodeFactory<?>> deriverNodeProviderOptional = deriverNodeProviderRegistry.getDeriverNodeProvider(deliverNodeClass);
+            Optional<DeriverNodeFactory<?>> deriverNodeProviderOptional = engine.getDeriverNodeProviderRegistry().getDeriverNodeProvider(deliverNodeClass);
             if (deriverNodeProviderOptional.isPresent()) {
                 MentalWorldEngine.Logger nodeLogger = new PrefixLogger(logger, deliverNodeClass.getSimpleName() + ": ");
                 result = deriverNodeProviderOptional.get().createDeriverNode(workingMemory, beliefSystemGraph, nodeLogger);
