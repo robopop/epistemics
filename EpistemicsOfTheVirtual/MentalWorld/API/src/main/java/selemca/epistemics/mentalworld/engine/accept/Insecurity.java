@@ -2,7 +2,7 @@ package selemca.epistemics.mentalworld.engine.accept;
 
 public class Insecurity {
     private Double converseToTarget;
-    private Integer DirectAssociationModificationPercentage;
+    private Integer directAssociationModificationPercentage;
 
     public Double getConverseToTarget() {
         return converseToTarget;
@@ -13,10 +13,10 @@ public class Insecurity {
     }
 
     public Integer getDirectAssociationModificationPercentage() {
-        return DirectAssociationModificationPercentage;
+        return directAssociationModificationPercentage;
     }
 
     public void setDirectAssociationModificationPercentage(Integer directAssociationModificationPercentage) {
-        DirectAssociationModificationPercentage = directAssociationModificationPercentage;
+        this.directAssociationModificationPercentage = directAssociationModificationPercentage;
     }
 }
