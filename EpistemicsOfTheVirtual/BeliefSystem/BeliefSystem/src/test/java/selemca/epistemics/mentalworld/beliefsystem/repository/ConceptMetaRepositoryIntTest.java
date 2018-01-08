@@ -16,13 +16,14 @@ import org.springframework.transaction.annotation.Transactional;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.data.entity.ConceptMeta;
 import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemConfig;
+import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemTestConfig;
 
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {BeliefSystemTestConfig.class, BeliefSystemConfig.class})
 @Transactional
-public class ConceptMetaRepositoryIT {
+public class ConceptMetaRepositoryIntTest {
     private static final String TEST_ID = "unittest";
     private static final double TEST_TV = 0.7;
     private static final String META_RELATION = "kindof";

@@ -2,5 +2,5 @@
 *.iml
 target
 /data
-/derby.log
+/**/derby.log
 /src/build/docker/*.war

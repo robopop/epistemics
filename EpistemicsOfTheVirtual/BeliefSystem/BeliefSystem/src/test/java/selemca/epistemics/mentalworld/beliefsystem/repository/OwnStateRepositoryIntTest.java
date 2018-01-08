@@ -15,13 +15,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import selemca.epistemics.data.entity.OwnState;
 import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemConfig;
+import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemTestConfig;
 
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {BeliefSystemTestConfig.class, BeliefSystemConfig.class})
 @Transactional
-public class OwnStateRepositoryIT {
+public class OwnStateRepositoryIntTest {
     private static final String TEST_KEY = "key";
     private static final String TEST_VALUE = "value";
     private static final String TEST_VALUE_UPDATED = "changed";

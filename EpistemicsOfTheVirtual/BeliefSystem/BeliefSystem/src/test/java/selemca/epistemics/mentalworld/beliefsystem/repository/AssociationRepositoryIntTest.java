@@ -17,13 +17,14 @@ import org.springframework.transaction.annotation.Transactional;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemConfig;
+import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemTestConfig;
 
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {BeliefSystemTestConfig.class, BeliefSystemConfig.class})
 @Transactional
-public class AssociationRepositoryIT {
+public class AssociationRepositoryIntTest {
     private static final String CONCEPT1_NAME = "concept1";
     private static final String CONCEPT2_NAME = "concept2";
     private static final double TEST_TV = 0.7;

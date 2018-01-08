@@ -15,13 +15,14 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemConfig;
+import selemca.epistemics.mentalworld.beliefsystem.config.BeliefSystemTestConfig;
 
 import java.util.Optional;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {BeliefSystemTestConfig.class, BeliefSystemConfig.class})
 @Transactional
-public class ConceptRepositoryIT {
+public class ConceptRepositoryIntTest {
     private static final String TEST_ID = "unittest";
     private static final double TEST_TV = 0.7;
     private static final double TEST_UPDATED_TV = 0.6;
