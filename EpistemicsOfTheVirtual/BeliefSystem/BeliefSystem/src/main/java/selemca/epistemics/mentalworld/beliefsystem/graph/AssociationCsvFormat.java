@@ -1,22 +1,16 @@
-package selemca.epistemics.mentalworld.beliefsystemadmin.importexport;
+package selemca.epistemics.mentalworld.beliefsystem.graph;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.beliefsystemadmin.dbaccess.AssociationUIObject;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.*;
 
-/**
- * Created by henrizwols on 09-11-15.
- */
 public class AssociationCsvFormat {
     private static final String[] HEADER = new String[] {"concept1", "concept2", "truthValue", "relation", "value"};
     private static final CSVFormat CSV_FORMAT = CSVFormat.DEFAULT.withHeader(HEADER);
@@ -42,7 +36,7 @@ public class AssociationCsvFormat {
         Object[] result = new Object[3];
         result[0] = association.getConcept1().getName();
         result[1] = association.getConcept2().getName();
-        result[2] = Double.valueOf(association.getTruthValue());
+        result[2] = association.getTruthValue();
         return result;
     }
 
@@ -50,7 +44,7 @@ public class AssociationCsvFormat {
         Object[] result = new Object[5];
         result[0] = association.getConcept1().getName();
         result[1] = association.getConcept2().getName();
-        result[2] = Double.valueOf(association.getTruthValue());
+        result[2] = association.getTruthValue();
         result[3] = associationMeta.getRelation();
         result[4] = associationMeta.getValue();
         return result;

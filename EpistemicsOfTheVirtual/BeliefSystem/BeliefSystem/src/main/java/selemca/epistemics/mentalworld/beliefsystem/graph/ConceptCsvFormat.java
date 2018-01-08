@@ -1,22 +1,16 @@
-package selemca.epistemics.mentalworld.beliefsystemadmin.importexport;
+package selemca.epistemics.mentalworld.beliefsystem.graph;
 
 import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVPrinter;
 import org.apache.commons.csv.CSVRecord;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.data.entity.ConceptMeta;
 
 import java.io.IOException;
-import java.io.Reader;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
-/**
- * Created by henrizwols on 09-11-15.
- */
 public class ConceptCsvFormat {
     private static final String[] HEADER = new String[] {"name", "relation", "value"};
     private static final CSVFormat CSV_FORMAT = CSVFormat.DEFAULT.withHeader(HEADER);
