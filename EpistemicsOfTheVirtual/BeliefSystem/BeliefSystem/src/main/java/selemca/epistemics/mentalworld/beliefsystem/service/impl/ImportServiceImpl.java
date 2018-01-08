@@ -1,4 +1,4 @@
-package selemca.epistemics.mentalworld.beliefsystem.graph;
+package selemca.epistemics.mentalworld.beliefsystem.service.impl;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -9,15 +9,19 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.data.entity.ConceptMeta;
+import selemca.epistemics.mentalworld.beliefsystem.graph.AssociationCsvFormat;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptCsvFormat;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationMetaRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptMetaRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.ImportService;
 
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
@@ -25,11 +29,11 @@ import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import static selemca.epistemics.mentalworld.beliefsystem.graph.Exporter.ASSOCIATIONS_CSV_EXPORT_FILENAME;
-import static selemca.epistemics.mentalworld.beliefsystem.graph.Exporter.CONCEPTS_CSV_EXPORT_FILENAME;
+import static selemca.epistemics.mentalworld.beliefsystem.service.ExportService.ASSOCIATIONS_CSV_EXPORT_FILENAME;
+import static selemca.epistemics.mentalworld.beliefsystem.service.ExportService.CONCEPTS_CSV_EXPORT_FILENAME;
 
 @Component
-public class Importer {
+public class ImportServiceImpl implements ImportService {
     private static final CSVFormat CSV_FORMAT = CSVFormat.DEFAULT.withHeader().withCommentMarker('#');
 
     @Autowired
@@ -41,6 +45,7 @@ public class Importer {
     @Autowired
     private AssociationMetaRepository associationMetaRepository;
 
+    @Override
     public void importDbData(File exportFile, boolean wipeDb) throws IOException {
         // Test run
         importZipFile(exportFile, false);
@@ -55,15 +60,20 @@ public class Importer {
     }
 
     private void importZipFile(File exportFile, boolean writeDb) throws IOException {
-        try (FileInputStream fis = new FileInputStream(exportFile)) {
-            try (BufferedInputStream bis = new BufferedInputStream(fis)) {
-                try (ZipInputStream zipInputStream = new ZipInputStream(bis)) {
-                    ZipEntry zipEntry;
-                    while ((zipEntry = zipInputStream.getNextEntry()) != null) {
-                        readZipEntry(zipInputStream, zipEntry, writeDb);
-                        zipInputStream.closeEntry();
-                    }
-                }
+        try (InputStream fis = new FileInputStream(exportFile)) {
+            importZipFile(fis, writeDb);
+        }
+    }
+
+    @Override
+    public void importZipFile(InputStream input, boolean writeDb) throws IOException {
+        try (BufferedInputStream bis = new BufferedInputStream(input);
+             ZipInputStream zipInputStream = new ZipInputStream(bis)
+        ) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zipInputStream.getNextEntry()) != null) {
+                readZipEntry(zipInputStream, zipEntry, writeDb);
+                zipInputStream.closeEntry();
             }
         }
     }

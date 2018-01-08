@@ -4,23 +4,21 @@
  * Johan F. Hoorn - theoretical model and algorithms
  * Henri Zwols - software design and engineering
  */
-package selemca.epistemics.mentalworld.beliefsystem.repository.impl;
+package selemca.epistemics.mentalworld.beliefsystem.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.*;
 import selemca.epistemics.mentalworld.beliefsystem.repository.*;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Component("beliefModelService")
 @Primary
 public class BeliefModelServiceImpl implements BeliefModelService {
-    private static final String CONTEXT_PROPERTY = "context";
-    private static final String CONCEPTMETA_RELATION_KINDOF = "kind_of";
-    private static final String CONCEPTMETA_VALUE_CONTEXT = "context";
-    private static final String RELATION_TYPE = "relationType";
 
     @Autowired
     private ConceptRepository conceptRepository;
@@ -39,15 +37,11 @@ public class BeliefModelServiceImpl implements BeliefModelService {
 
     @Override
     public void cascadingDelete(Concept concept) {
-        for (Association association : listAssociations(concept)) {
-            associationRepository.delete(association);
-        }
-        for (ConceptMeta meta : conceptMetaRepository.findByConcept(concept)) {
-            conceptMetaRepository.delete(meta);
-        }
+        listAssociations(concept).forEach(associationRepository::delete);
+        conceptMetaRepository.findByConcept(concept).forEach(conceptMetaRepository::delete);
         Optional<String> ownStateValueOptional = getOwnStateValue(CONTEXT_PROPERTY);
         if (ownStateValueOptional.isPresent() && ownStateValueOptional.get().equals(concept.getName())) {
-            setContext((String)null);
+            setContext(null);
         }
         conceptRepository.delete(concept);
     }
@@ -148,11 +142,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
     @Override
     public Set<Concept> listContextConcepts() {
         List<ConceptMeta> conceptMetas = conceptMetaRepository.findByRelationAndValue(CONCEPTMETA_RELATION_KINDOF, CONCEPTMETA_VALUE_CONTEXT);
-        Set<Concept> concepts = new HashSet<>();
-        for (ConceptMeta conceptMeta : conceptMetas) {
-            concepts.add(conceptMeta.getConcept());
-        }
-        return concepts;
+        return conceptMetas.stream().map(ConceptMeta::getConcept).collect(Collectors.toSet());
     }
 
     @Override
@@ -201,9 +191,8 @@ public class BeliefModelServiceImpl implements BeliefModelService {
     public Optional<Concept> getContext() {
         Optional<String> ownStateValueOptional = getOwnStateValue(CONTEXT_PROPERTY);
         Optional<Concept> context = Optional.empty();
-        Optional<String> stateValueOptional = ownStateValueOptional;
-        if (stateValueOptional.isPresent()) {
-            context = conceptRepository.findOne(stateValueOptional.get());
+        if (ownStateValueOptional.isPresent()) {
+            context = conceptRepository.findOne(ownStateValueOptional.get());
         }
         return context;
     }

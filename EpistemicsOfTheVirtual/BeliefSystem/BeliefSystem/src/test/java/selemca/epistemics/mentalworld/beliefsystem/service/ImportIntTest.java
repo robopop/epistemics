@@ -1,4 +1,4 @@
-package selemca.epistemics.mentalworld.beliefsystem.graph;
+package selemca.epistemics.mentalworld.beliefsystem.service;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Rule;
@@ -25,18 +25,18 @@ public class ImportIntTest {
     private static final String BELIEF_SYSTEM_FILE_NAME = "BeliefSystem.zip";
 
     @Autowired
-    private Importer importer;
+    private ImportService importService;
 
     @Rule
     public TemporaryFolder temporaryFolder = new TemporaryFolder();
 
     @Test
     public void testImport() throws IOException {
-        File importFile = getBeliefsystemZip();
-        importer.importDbData(importFile, false);
+        File importFile = getBeliefSystemZip();
+        importService.importDbData(importFile, false);
     }
 
-    private File getBeliefsystemZip() throws IOException {
+    private File getBeliefSystemZip() throws IOException {
         File result = temporaryFolder.newFile(BELIEF_SYSTEM_FILE_NAME);
         InputStream inputStream = this.getClass().getResourceAsStream("/" + BELIEF_SYSTEM_FILE_NAME);
         OutputStream outputStream = new FileOutputStream(result);

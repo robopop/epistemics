@@ -4,7 +4,7 @@
  * Johan F. Hoorn - theoretical model and algorithms
  * Henri Zwols - software design and engineering
  */
-package selemca.epistemics.mentalworld.beliefsystem.repository.impl;
+package selemca.epistemics.mentalworld.beliefsystem.service.impl;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraDistance;
 import edu.uci.ics.jung.graph.Graph;
@@ -16,9 +16,9 @@ import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.WeightedBeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.WeightedBeliefModelService;
 
 import java.util.*;
 

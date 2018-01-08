@@ -1,4 +1,4 @@
-package selemca.epistemics.mentalworld.beliefsystem.graph;
+package selemca.epistemics.mentalworld.beliefsystem.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -6,10 +6,13 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.data.entity.ConceptMeta;
+import selemca.epistemics.mentalworld.beliefsystem.graph.AssociationCsvFormat;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptCsvFormat;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationMetaRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptMetaRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
+import selemca.epistemics.mentalworld.beliefsystem.service.ExportService;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -21,9 +24,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 @Component
-public class Exporter {
-    public static final String CONCEPTS_CSV_EXPORT_FILENAME = "Concepts.csv";
-    public static final String ASSOCIATIONS_CSV_EXPORT_FILENAME = "Associations.csv";
+public class ExportServiceImpl implements ExportService {
 
     @Autowired
     private ConceptRepository conceptRepository;
@@ -34,6 +35,7 @@ public class Exporter {
     @Autowired
     private AssociationMetaRepository associationMetaRepository;
 
+    @Override
     public void exportDbData(File exportFile) throws IOException {
         try (FileOutputStream fos = new FileOutputStream(exportFile)) {
             try (BufferedOutputStream bos = new BufferedOutputStream(fos)) {

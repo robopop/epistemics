@@ -6,28 +6,39 @@
  */
 package selemca.epistemics.beliefsystem.rest.controller;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.data.entity.ConceptMeta;
 import selemca.epistemics.mentalworld.beliefsystem.repository.*;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.ImportService;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.logging.Logger;
 
 @RestController
 @RequestMapping(BeliefSystemRestController.URL_PREFIX)
 public class BeliefSystemRestController {
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     protected static final String URL_PREFIX = "/epistemics";
     protected static final String SERVLET_ASSOCIATION = "/association";
     protected static final String SERVLET_ASSOCIATIONMETA = "/associationmeta";
@@ -35,6 +46,7 @@ public class BeliefSystemRestController {
     protected static final String SERVLET_CONTEXT = "/context";
     protected static final String SERVLET_CONTEXTS = "/contexts";
     protected static final String SERVLET_CONCEPTMETA = "/conceptmeta";
+    protected static final String SERVLET_BELIEF_SYSTEM = "/belief-system";
     protected static final String PARAM_CONCEPT_ID = "conceptId";
 
     @Autowired
@@ -51,6 +63,9 @@ public class BeliefSystemRestController {
 
     @Autowired
     private BeliefModelService beliefModelService;
+
+    @Autowired
+    private ImportService importService;
 
     /*
      * CONCEPT
@@ -219,4 +234,24 @@ public class BeliefSystemRestController {
         beliefModelService.setContext(context);
     }
 
+    @RequestMapping(value = SERVLET_BELIEF_SYSTEM, method = RequestMethod.POST)
+    public void testImportBeliefSystem(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        importService.importZipFile(multipartFile.getInputStream(), false);
+    }
+
+    @RequestMapping(value = SERVLET_BELIEF_SYSTEM, method = RequestMethod.PUT)
+    public void importBeliefSystem(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        importService.importZipFile(multipartFile.getInputStream(), true);
+    }
+
+    @RequestMapping(value = SERVLET_BELIEF_SYSTEM, method = RequestMethod.DELETE)
+    public void deleteBeliefSystem() {
+        beliefModelService.eraseAll();
+    }
+
+    @ExceptionHandler(IOException.class)
+    public ResponseEntity<?> handleIOException(IOException ioException) {
+        LOG.error("IO exception", ioException);
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
 }

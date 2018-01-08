@@ -16,6 +16,6 @@ import org.springframework.context.annotation.Import;
  */
 @Configuration
 @Import({PersistenceContext.class})
-@ComponentScan({"selemca.epistemics.mentalworld.beliefsystem.graph", "selemca.epistemics.mentalworld.beliefsystem.repository.impl"})
+@ComponentScan({"selemca.epistemics.mentalworld.beliefsystem.graph", "selemca.epistemics.mentalworld.beliefsystem.service.impl"})
 public class BeliefSystemConfig {
 }

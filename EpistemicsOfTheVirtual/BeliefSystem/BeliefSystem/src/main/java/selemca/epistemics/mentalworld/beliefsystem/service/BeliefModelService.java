@@ -1,4 +1,4 @@
-package selemca.epistemics.mentalworld.beliefsystem.repository;
+package selemca.epistemics.mentalworld.beliefsystem.service;
 
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.AssociationMeta;
@@ -18,6 +18,11 @@ import java.util.Set;
  * Henri Zwols - software design and engineering
  */
 public interface BeliefModelService {
+    String CONTEXT_PROPERTY = "context";
+    String CONCEPTMETA_RELATION_KINDOF = "kind_of";
+    String CONCEPTMETA_VALUE_CONTEXT = "context";
+    String RELATION_TYPE = "relationType";
+
     // CONCEPT
 
     /**

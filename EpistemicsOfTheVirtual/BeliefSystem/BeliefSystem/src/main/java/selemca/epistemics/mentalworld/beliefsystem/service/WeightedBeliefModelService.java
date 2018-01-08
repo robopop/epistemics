@@ -4,7 +4,7 @@
  * Johan F. Hoorn - theoretical model and algorithms
  * Henri Zwols - software design and engineering
  */
-package selemca.epistemics.mentalworld.beliefsystem.repository;
+package selemca.epistemics.mentalworld.beliefsystem.service;
 
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;

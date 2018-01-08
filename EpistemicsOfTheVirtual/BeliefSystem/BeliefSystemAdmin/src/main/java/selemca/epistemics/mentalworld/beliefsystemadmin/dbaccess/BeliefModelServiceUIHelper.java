@@ -4,16 +4,16 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationMetaRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.beliefsystemadmin.importexport.ZipExportStreamResourceFactory;
 import selemca.epistemics.mentalworld.beliefsystemadmin.importexport.ZipUploadReceiverFactory;
 
 import javax.servlet.ServletContext;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class BeliefModelServiceUIHelper implements Serializable {
     private final SpringContextHelper helper;
@@ -24,27 +24,20 @@ public class BeliefModelServiceUIHelper implements Serializable {
 
     public List<Concept> findConcepts(String stringFilter) {
         List<Concept> allConcepts = getConceptRepository().findAll();
-        List<Concept> filtered = new ArrayList<>();
-        for (Concept concept : allConcepts) {
-            if (stringFilter == null || stringFilter.isEmpty() ||
-                    concept.getName().contains(stringFilter)) {
-                filtered.add(concept);
-            }
-        }
-        return filtered;
+        return allConcepts.stream()
+                .filter(concept -> stringFilter == null || stringFilter.isEmpty() ||
+                                concept.getName().contains(stringFilter)
+                )
+                .collect(Collectors.toList());
     }
 
     public List<AssociationUIObject> findAssociations(String stringFilter) {
         List<AssociationUIObject> allAssociations = convertAll(getAssociationRepository().findAll());
-        List<AssociationUIObject> filtered = new ArrayList<>();
-        for (AssociationUIObject association : allAssociations) {
-            if (stringFilter == null || stringFilter.isEmpty() ||
-                    (association.getConcept1().contains(stringFilter) ||
-                        association.getConcept2().contains(stringFilter))) {
-                    filtered.add(association);
-            }
-        }
-        return filtered;
+        return allAssociations.stream()
+                .filter(association -> stringFilter == null || stringFilter.isEmpty() ||
+                                (association.getConcept1().contains(stringFilter) || association.getConcept2().contains(stringFilter))
+                )
+                .collect(Collectors.toList());
     }
 
     public void save(AssociationUIObject associationUIObject, String relationType) {
@@ -63,7 +56,7 @@ public class BeliefModelServiceUIHelper implements Serializable {
     private Association createAssociation(AssociationUIObject associationUIObject) {
         Concept concept1 = retrieveOrStore(associationUIObject.getConcept1());
         Concept concept2 = retrieveOrStore(associationUIObject.getConcept2());
-        // Store association's concepts in alphabetical order. Just for esthetics
+        // Store association's concepts in alphabetical order. Just for aesthetics
         if (concept1.getName().compareTo(concept2.getName()) > 0) {
             Concept swapHelper = concept1;
             concept1 = concept2;
@@ -106,7 +99,7 @@ public class BeliefModelServiceUIHelper implements Serializable {
     private Concept retrieveOrStore(String conceptName) {
         ConceptRepository conceptRepository = getConceptRepository();
         Optional<Concept> conceptOptional = conceptRepository.findOne(conceptName);
-        Concept concept = null;
+        Concept concept;
         if (conceptOptional.isPresent()) {
             concept = conceptOptional.get();
         } else {
@@ -142,11 +135,7 @@ public class BeliefModelServiceUIHelper implements Serializable {
     }
 
     private List<AssociationUIObject> convertAll(List<Association> associations) {
-        List<AssociationUIObject> result = new ArrayList<>();
-        for (Association association : associations) {
-            result.add(convert(association));
-        }
-        return result;
+        return associations.stream().map(this::convert).collect(Collectors.toList());
     }
 
     private AssociationUIObject convert(Association association) {

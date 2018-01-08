@@ -5,7 +5,7 @@ import com.vaadin.ui.Notification;
 import com.vaadin.ui.Upload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import selemca.epistemics.mentalworld.beliefsystem.graph.Importer;
+import selemca.epistemics.mentalworld.beliefsystem.service.ImportService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,7 +16,7 @@ import java.io.OutputStream;
 public class ZipUploadReceiverFactory {
 
     @Autowired
-    private Importer importer;
+    private ImportService importService;
 
     public ZipUploadReceiver createZipUploadReceiver() {
         return new ZipUploadReceiver();
@@ -57,7 +57,7 @@ public class ZipUploadReceiverFactory {
         @Override
         public void uploadSucceeded(Upload.SucceededEvent event) {
             try {
-                importer.importDbData(uploadFile, isWipeDb());
+                importService.importDbData(uploadFile, isWipeDb());
             } catch (Exception e) {
                 e.printStackTrace();
                 new Notification("Could not read file",
