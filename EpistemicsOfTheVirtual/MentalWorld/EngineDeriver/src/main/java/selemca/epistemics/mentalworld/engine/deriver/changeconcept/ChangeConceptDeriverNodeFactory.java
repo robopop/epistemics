@@ -13,15 +13,12 @@ import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.node.ChangeConceptDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
-/**
- * Created by henrizwols on 27-02-15.
- */
 @Component
 public class ChangeConceptDeriverNodeFactory implements DeriverNodeFactory<ChangeConceptDeriverNode> {
     private static final String CONFIGURATION_NAME = "changeConceptDeriver.default";

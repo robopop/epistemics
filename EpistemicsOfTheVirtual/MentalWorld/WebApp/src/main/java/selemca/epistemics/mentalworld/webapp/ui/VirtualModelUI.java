@@ -19,8 +19,8 @@ import com.vaadin.annotations.Title;
 import com.vaadin.annotations.VaadinServletConfiguration;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.server.VaadinServlet;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.webapp.wordnet.WordnetAccess;
 
@@ -111,13 +111,10 @@ public class VirtualModelUI extends UI {
 			for (String word : words) {
 				c.addItem(word);
 			}
-			access(new Runnable() {
-				@Override
-				public void run() {
-					wordnetComboBox.setContainerDataSource(c);
-					wordnetCheckBox.setEnabled(true);
-				}
-			});
+			access(() -> {
+                wordnetComboBox.setContainerDataSource(c);
+                wordnetCheckBox.setEnabled(true);
+            });
 		}
 	}
 

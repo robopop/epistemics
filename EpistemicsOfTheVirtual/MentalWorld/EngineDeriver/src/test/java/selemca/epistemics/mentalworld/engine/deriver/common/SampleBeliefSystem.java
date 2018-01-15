@@ -11,8 +11,8 @@ import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.AssociationPK;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 
 import java.util.*;
 
@@ -221,7 +221,9 @@ public class SampleBeliefSystem {
         public Optional<Association> findOne(AssociationPK associationPK) {
             Association result = null;
             for (Association association : associations) {
-                if (association.getConcept1().getName().equals(associationPK.getConcept1()) && association.getConcept2().getName().equals(associationPK)) {
+                if (association.getConcept1().getName().equals(associationPK.getConcept1()) &&
+                    association.getConcept2().getName().equals(associationPK.getConcept2())
+                ) {
                     result = association;
                 }
             }

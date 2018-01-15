@@ -10,7 +10,7 @@ import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatcher;
@@ -25,9 +25,6 @@ import java.util.Set;
 
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 
-/**
- * Created by henrizwols on 27-02-15.
- */
 public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriverNode {
     final double CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT = 1.0;
 
@@ -49,21 +46,21 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
 
     @Override
     public boolean categoryMatch(Collection<String> precludeConcepts) {
-        boolean match = false;
+        boolean match;
 
         Set<String> observationFeatures = workingMemory.getObservationFeatures();
         Optional<CategoryMatch> categoryMatchOptional = categoryMatcher.findMatch(beliefSystemGraph, observationFeatures, precludeConcepts, logger);
         if (categoryMatchOptional.isPresent()) {
-            match = true;
             CategoryMatch foundMatch = categoryMatchOptional.get();
             workingMemory.setCategoryMatch(foundMatch);
             logger.debug(foundMatch.toString());
 
-            match &= foundMatch.getContributors().size() == workingMemory.getObservationFeatures().size();
+            match = foundMatch.getContributors().size() == workingMemory.getObservationFeatures().size();
             match &= withinContext(foundMatch);
             match &= allObservationsWithinReality();
             logger.debug("Match is " + (match ? "valid." : "invalid."));
         } else {
+            match = false;
             logger.debug("No match found.");
         }
 

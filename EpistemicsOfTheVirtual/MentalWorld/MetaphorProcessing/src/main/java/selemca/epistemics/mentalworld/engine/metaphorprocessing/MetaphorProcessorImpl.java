@@ -11,17 +11,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
-import selemca.epistemics.mentalworld.beliefsystem.repository.WeightedBeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.WeightedBeliefModelService;
 import selemca.epistemics.mentalworld.engine.metaphor.MetaphorProcessor;
 
 import java.util.*;
 import java.util.logging.Logger;
 import static selemca.epistemics.mentalworld.engine.metaphorprocessing.MetaphorProcessingSettingsProvider.*;
 
-/**
- * Created by henrizwols on 25-05-15.
- */
 @Component("metaphorProcessor.default")
 public class MetaphorProcessorImpl implements MetaphorProcessor {
     private static final double VICINITY_TRESHOLT_DEFAULT = 0.5;
@@ -44,7 +41,7 @@ public class MetaphorProcessorImpl implements MetaphorProcessor {
 
     private enum RelationType {
         LITERAL, FIGURATIVE
-    };
+    }
 
     @Override
     public MetaphorAssesment assesRelation(Concept concept1, Concept concept2) {
@@ -113,12 +110,16 @@ public class MetaphorProcessorImpl implements MetaphorProcessor {
         for (AssociationMeta associationMeta : associationMetaList) {
             if (RELATION_TYPE.equals(associationMeta.getRelation())) {
                 String typeValue = associationMeta.getValue();
-                if (RELATION_TYPE_FIGURATIVE.equals(typeValue)) {
-                    type = RelationType.FIGURATIVE;
-                } else if (RELATION_TYPE_LITERAL.equals(typeValue)) {
-                    type = RelationType.LITERAL;
-                } else {
-                    Logger.getLogger(getClass().getSimpleName()).info(String.format("Configured relation type '%s' between %s and %s not known. Valid values are 'f' and 'l'", typeValue, concept, relation));
+                switch (typeValue) {
+                    case RELATION_TYPE_FIGURATIVE:
+                        type = RelationType.FIGURATIVE;
+                        break;
+                    case RELATION_TYPE_LITERAL:
+                        type = RelationType.LITERAL;
+                        break;
+                    default:
+                        Logger.getLogger(getClass().getSimpleName()).info(String.format("Configured relation type '%s' between %s and %s not known. Valid values are 'f' and 'l'", typeValue, concept, relation));
+                        break;
                 }
             }
         }

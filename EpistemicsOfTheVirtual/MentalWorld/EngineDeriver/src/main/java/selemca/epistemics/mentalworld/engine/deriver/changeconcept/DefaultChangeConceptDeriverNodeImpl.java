@@ -8,9 +8,8 @@ package selemca.epistemics.mentalworld.engine.deriver.changeconcept;
 
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
-import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.node.ChangeConceptDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
@@ -19,9 +18,6 @@ import java.util.Optional;
 
 import static selemca.epistemics.mentalworld.engine.deriver.changeconcept.ChangeConceptDeriverNodeSettingsProvider.NEW_ASSOCIATION_TRUTH_VALUE;
 
-/**
- * Created by henrizwols on 17-04-15.
- */
 public class DefaultChangeConceptDeriverNodeImpl implements ChangeConceptDeriverNode {
     final double NEW_ASSOSIATION_TRUTH_VALUE_DEFAULT = 0.5;
 

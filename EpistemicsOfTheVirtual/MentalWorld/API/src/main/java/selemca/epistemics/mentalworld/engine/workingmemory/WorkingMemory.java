@@ -12,9 +12,6 @@ import selemca.epistemics.mentalworld.engine.accept.Engine;
 
 import java.util.Set;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
 public class WorkingMemory {
     private Set<String> observationFeatures;
     private CategoryMatch categoryMatch = null;

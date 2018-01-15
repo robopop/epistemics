@@ -13,7 +13,7 @@ import org.mockito.Mock;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;

@@ -10,7 +10,7 @@ import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.deriver.util.GraphUtil;
@@ -22,9 +22,6 @@ import java.util.Optional;
 
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 
-/**
- * Created by henrizwols on 27-02-15.
- */
 public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNode {
     final double CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT = 1.0;
 

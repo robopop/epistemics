@@ -17,8 +17,8 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import selemca.epistemics.data.entity.AssociationMeta;
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
-import selemca.epistemics.mentalworld.beliefsystem.repository.WeightedBeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.WeightedBeliefModelService;
 import selemca.epistemics.mentalworld.engine.metaphor.MetaphorProcessor;
 
 import java.util.ArrayList;

@@ -14,7 +14,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
-import selemca.epistemics.mentalworld.beliefsystem.repository.BeliefModelService;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.deriver.common.AbstractDeriverNodeTest;
 
 import java.util.Optional;
