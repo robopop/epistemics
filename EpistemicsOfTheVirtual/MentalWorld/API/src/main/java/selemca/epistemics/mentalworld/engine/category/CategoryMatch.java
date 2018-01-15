@@ -10,9 +10,6 @@ import selemca.epistemics.data.entity.Concept;
 
 import java.util.Set;
 
-/**
- * Created by henrizwols on 27-05-15.
- */
 public interface CategoryMatch {
     Concept getConcept();
 
