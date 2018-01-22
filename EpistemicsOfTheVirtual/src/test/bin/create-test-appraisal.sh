@@ -2,11 +2,39 @@
 
 set -e -x
 
+SED_EXT=-r
+case "$(uname)" in
+Darwin*)
+        SED_EXT=-E
+esac
+export SED_EXT
+
 BIN="$(cd "$(dirname "$0")" ; pwd)"
 PROJECT="$(dirname "${BIN}")"
 DATA="${PROJECT}/data"
 mkdir -p "${DATA}"
 PREFIX="${DATA}/test-$$-"
+
+function clean-up() {
+    rm -rf "${PREFIX}"*
+}
+
+trap "clean-up" 0
+
+FLAT='false'
+if type json-to-flat.sh > /dev/null 2>&1
+then
+    FLAT='true'
+fi
+
+function post-process() {
+    if "${FLAT}"
+    then
+        json-to-flat.sh -p "$@" -
+    else
+        cat
+    fi
+}
 
 IMPORT_FILE="${PROJECT}/../../../Installation/BeliefSystem.zip"
 if [ -r "${IMPORT_FILE}" ]
@@ -22,7 +50,7 @@ function curl-appraisal() {
     local URL="http://localhost:8888/mentalworld-rest/epistemics/appraisal${URL_PATH}"
     echo "URL=[${URL}]" >&2
     local JSON_MIME='application/json'
-    curl -X POST -sS -D - --header "Content-Type: ${JSON_MIME}" --header "Accept: ${JSON_MIME}" "$@" "${URL}" | tr -d '\015'
+    curl -sS -D - --header "Content-Type: ${JSON_MIME}" --header "Accept: ${JSON_MIME}" "$@" "${URL}" | tr -d '\015'
 }
 function post-appraisal() {
     curl-appraisal "$@" -X POST
@@ -91,17 +119,19 @@ post-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" -d '{
   }
 }'
 get-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" \
-    | line-breaks-json.sh \
-    | indent-json.sh
+    | post-process
 
 post-appraisal "/${APPRAISAL_ID}/observation-features" -b "${COOKIE_JAR}" -d '["beak", "eggs"]'
 
 get-appraisal "/${APPRAISAL_ID}/observation-features" -b "${COOKIE_JAR}" \
-    | line-breaks-json.sh \
-    | indent-json.sh
+    | post-process -a
 
 curl -sS -D - "http://localhost:8888/mentalworld-rest/epistemics/appraisal/${APPRAISAL_ID}/new-context" -b "${COOKIE_JAR}" -d 'conceptId=circus'
 
 get-appraisal "/${APPRAISAL_ID}/new-context" -b "${COOKIE_JAR}" \
-    | line-breaks-json.sh \
-    | indent-json.sh
+    | post-process
+
+post-appraisal "/${APPRAISAL_ID}/accept-observation" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
+
+get-appraisal "/${APPRAISAL_ID}/log-messages" -b "${COOKIE_JAR}" \
+    | post-process -a

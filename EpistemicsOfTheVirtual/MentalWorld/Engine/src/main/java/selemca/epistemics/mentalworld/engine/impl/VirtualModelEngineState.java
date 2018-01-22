@@ -6,6 +6,7 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
+import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.metaphor.MetaphorProcessor;
@@ -35,7 +36,7 @@ import java.util.function.BiFunction;
 
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
 
-class VirtualModelEngineState {
+class VirtualModelEngineState implements MentalWorldEngineState {
 
     private final MentalWorldEngineImpl engine;
     private final WorkingMemory workingMemory;
@@ -46,32 +47,47 @@ class VirtualModelEngineState {
     private boolean observationAccepted = false;
 
     public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, MentalWorldEngine.Logger logger) {
-        this.engine = engine;
-        this.workingMemory = new WorkingMemory();
-        workingMemory.setObservationFeatures(observationFeatures);
+        this(engine, createWorkingMemory(context, observationFeatures, null), logger);
         createEngineSettings(engine.getApplicationSettings(), "engine", Engine.class)
                 .map((engineSettings) -> {
                     workingMemory.setEngineSettings(engineSettings);
                     return null;
                 });
+    }
+
+    public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
+        this(engine, createWorkingMemory(context, observationFeatures, engineSettings), logger);
+    }
+
+    public VirtualModelEngineState(MentalWorldEngineImpl engine, WorkingMemory workingMemory, MentalWorldEngine.Logger logger) {
+        this.engine = engine;
+        this.workingMemory = workingMemory;
         this.logger = logger;
         beliefSystemGraph = getGraph();
     }
 
-    public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
-        this.engine = engine;
-        this.workingMemory = new WorkingMemory();
+    public MentalWorldEngine.Logger getLogger() {
+        return logger;
+    }
+
+    private static WorkingMemory createWorkingMemory(Concept context, Set<String> observationFeatures, Engine engineSettings) {
+        WorkingMemory workingMemory = new WorkingMemory();
         workingMemory.setObservationFeatures(observationFeatures);
         workingMemory.setEngineSettings(engineSettings);
-        this.logger = logger;
-        beliefSystemGraph = getGraph();
+        workingMemory.setNewContext(context);
+        return workingMemory;
     }
 
     public boolean isObservationAccepted() {
         return observationAccepted;
     }
 
-    protected void acceptObservation() {
+    @Override
+    public WorkingMemory getWorkingMemory() {
+        return workingMemory;
+    }
+
+    public void acceptObservation() {
         int categoriesTried = 0;
         int maximumTraversals = engine.getApplicationSettings().getInt(MAXIMUM_TRAVERSALS, MentalWorldEngineImpl.MAXIMUM_TRAVERSALS_DEFAULT);
         while (!observationAccepted && categoriesTried < maximumTraversals) {

@@ -6,6 +6,7 @@
  */
 package selemca.epistemics.mentalworld.rest.controller;
 
+import org.apache.commons.collections15.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
+import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
 import selemca.epistemics.mentalworld.engine.accept.Request;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
+import selemca.epistemics.mentalworld.rest.util.LoggerImpl;
 
 import javax.servlet.http.HttpSession;
 import javax.ws.rs.BadRequestException;
@@ -35,6 +38,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -57,6 +61,7 @@ public class MentalWorldRestController {
     protected static final String PATH_ENGINE_SETTINGS = "/engine-settings";
     protected static final String PATH_OBSERVATION_FEATURES = "/observation-features";
     protected static final String PATH_NEW_CONTEXT = "/new-context";
+    protected static final String PATH_LOG_MESSAGES = "/log-messages";
 
     @Autowired
     private MentalWorldEngine mentalWorldEngine;
@@ -79,7 +84,8 @@ public class MentalWorldRestController {
     public ResponseEntity<Void> createAppraisal(HttpSession httpSession, UriComponentsBuilder uriComponentsBuilder) {
         AppraisalsMap appraisals = getAppraisalsMap(httpSession);
         String appraisalId = UUID.randomUUID().toString();
-        appraisals.put(appraisalId, new WorkingMemory());
+        MentalWorldEngine.Logger logger = new LoggerImpl();
+        appraisals.put(appraisalId, mentalWorldEngine.createState(logger));
         UriComponents uriComponents = uriComponentsBuilder.path(PATH_PREFIX + PATH_APPRAISAL + "/{id}").buildAndExpand(appraisalId);
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
@@ -133,55 +139,40 @@ public class MentalWorldRestController {
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ENGINE_SETTINGS, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public void setEngineSettings(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestBody Engine engineSettings, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         workingMemory.setEngineSettings(engineSettings);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ENGINE_SETTINGS, method = GET, produces = APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Engine getEngineSettings(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         return workingMemory.getEngineSettings();
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_OBSERVATION_FEATURES, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
     public void setObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestBody Set<String> observationFeatures, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         workingMemory.setObservationFeatures(observationFeatures);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_OBSERVATION_FEATURES, method = GET, produces = APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Set<String> getObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         return workingMemory.getObservationFeatures();
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_NEW_CONTEXT, method = POST)
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public void setNewContext(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestParam(CONCEPT_ID_PARAM) String conceptId, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         Concept concept = conceptRepository.findOne(conceptId).orElseThrow(() -> new NotFoundException(format("Concept: %s", conceptId)));
         workingMemory.setNewContext(concept);
     }
@@ -189,12 +180,37 @@ public class MentalWorldRestController {
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_NEW_CONTEXT, method = GET, produces = APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Concept getNewContext(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        WorkingMemory workingMemory = appraisals.get(appraisalId);
-        if (workingMemory == null) {
-            throw new NotFoundException(format("Appraisal: %s", appraisalId));
-        }
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        WorkingMemory workingMemory = engineState.getWorkingMemory();
         return workingMemory.getNewContext();
+    }
+
+    @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ACCEPT_OBSERVATION, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
+    @ResponseBody
+    public boolean acceptObservation(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        if (engineState == null) {
+            throw new NotFoundException(format("Engine state: %s", appraisalId));
+        }
+        engineState.acceptObservation();
+        return engineState.isObservationAccepted();
+    }
+
+    @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_LOG_MESSAGES, method = GET, produces = APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<?> getLogMessages(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
+        MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
+        LoggerImpl logger = (LoggerImpl) engineState.getLogger();
+        return IteratorUtils.toList(logger.iterator());
+    }
+
+    protected MentalWorldEngineState getEngineState(String appraisalId, HttpSession httpSession) {
+        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
+        MentalWorldEngineState engineState = appraisals.get(appraisalId);
+        if (engineState == null) {
+            throw new NotFoundException(format("Engine state: %s", appraisalId));
+        }
+        return engineState;
     }
 
     protected AppraisalsMap getAppraisalsMap(HttpSession httpSession) {

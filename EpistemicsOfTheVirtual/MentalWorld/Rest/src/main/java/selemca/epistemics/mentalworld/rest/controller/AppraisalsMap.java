@@ -1,8 +1,8 @@
 package selemca.epistemics.mentalworld.rest.controller;
 
-import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
+import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 
 import java.util.HashMap;
 
-public class AppraisalsMap extends HashMap<String,WorkingMemory> {
+public class AppraisalsMap extends HashMap<String,MentalWorldEngineState> {
 }

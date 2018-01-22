@@ -14,7 +14,9 @@ import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationReposit
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
+import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
+import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import selemca.epistemics.mentalworld.registry.DeriverNodeProviderRegistry;
 import selemca.epistemics.mentalworld.registry.MetaphorProcessorRegistry;
 
@@ -83,13 +85,22 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
     public boolean acceptObservation(Set<String> observationFeatures, Engine engineSettings, Logger logger) {
         Optional<Concept> contextOptional = beliefModelService.getContext();
         if (contextOptional.isPresent()) {
-            VirtualModelEngineState virtualModelEngineState = new VirtualModelEngineState(this, contextOptional.get(), observationFeatures, engineSettings, logger);
+            MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
+            WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
+            workingMemory.setEngineSettings(engineSettings);
+            workingMemory.setObservationFeatures(observationFeatures);
+            workingMemory.setNewContext(contextOptional.get());
 
-            virtualModelEngineState.acceptObservation();
-            return virtualModelEngineState.isObservationAccepted();
+            mentalWorldModelEngineState.acceptObservation();
+            return mentalWorldModelEngineState.isObservationAccepted();
         } else {
             logger.info("There is no context. We are mentally blind");
             return false;
         }
+    }
+
+    @Override
+    public MentalWorldEngineState createState(Logger logger) {
+        return new VirtualModelEngineState(this, new WorkingMemory(), logger);
     }
 }
