@@ -9,7 +9,7 @@ package selemca.epistemics.mentalworld.registry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.mentalworld.engine.metaphor.MetaphorProcessor;
-import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
+import selemca.epistemics.mentalworld.registry.config.RegistryKey;
 
 import java.util.Map;
 
@@ -18,6 +18,6 @@ public class MetaphorProcessorRegistry extends AbstractPluginRegistry<MetaphorPr
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     public MetaphorProcessorRegistry(Map<String, MetaphorProcessor> implementations) {
-        super(RegistryKeys.METAPHOR_PROSESSOR_IMPLEMENTATION, MetaphorProcessor.class, implementations);
+        super(RegistryKey.METAPHOR_PROSESSOR_IMPLEMENTATION, MetaphorProcessor.class, implementations);
     }
 }

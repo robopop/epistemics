@@ -6,7 +6,7 @@
  */
 package selemca.epistemics.mentalworld.registry.config;
 
-public enum RegistryKeys {
+public enum RegistryKey {
     DERIVER_CATEGORY_MATCH("engine.categoryMatchDeriver"),
     DERIVER_CONFORMATION("engine.conformationDeriver"),
     DERIVER_CONTEXTMATCH("engine.contextMatchDeriver"),
@@ -24,7 +24,7 @@ public enum RegistryKeys {
 
     private final String key;
 
-    private RegistryKeys(String key) {
+    private RegistryKey(String key) {
         this.key = key;
     }
 

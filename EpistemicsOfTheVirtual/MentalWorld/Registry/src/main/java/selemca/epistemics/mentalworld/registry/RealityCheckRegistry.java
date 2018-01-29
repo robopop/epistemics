@@ -9,7 +9,7 @@ package selemca.epistemics.mentalworld.registry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
-import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
+import selemca.epistemics.mentalworld.registry.config.RegistryKey;
 
 import java.util.Map;
 
@@ -18,6 +18,6 @@ public class RealityCheckRegistry extends AbstractPluginRegistry<RealityCheck> {
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     public RealityCheckRegistry(Map<String, RealityCheck> implementations) {
-        super(RegistryKeys.REALITY_CHECK_IMPLEMENTATION, RealityCheck.class, implementations);
+        super(RegistryKey.REALITY_CHECK_IMPLEMENTATION, RealityCheck.class, implementations);
     }
 }

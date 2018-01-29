@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.node.*;
-import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
+import selemca.epistemics.mentalworld.registry.config.RegistryKey;
 
 import javax.annotation.PostConstruct;
 import java.util.*;
@@ -27,18 +27,18 @@ public class DeriverNodeProviderRegistry {
     private List<DeriverNodeFactory> deriverNodeFactories;
 
 
-    private final Map<Class<? extends DeriverNode>, RegistryKeys> deriverNodeConfigurationKeys = new HashMap<>();
+    private final Map<Class<? extends DeriverNode>, RegistryKey> deriverNodeConfigurationKeys = new HashMap<>();
     {
-        deriverNodeConfigurationKeys.put(CategoryMatchDeriverNode.class, RegistryKeys.DERIVER_CATEGORY_MATCH);
-        deriverNodeConfigurationKeys.put(ConformationDeriverNode.class, RegistryKeys.DERIVER_CONFORMATION);
-        deriverNodeConfigurationKeys.put(ContextMatchDeriverNode.class, RegistryKeys.DERIVER_CONTEXTMATCH);
-        deriverNodeConfigurationKeys.put(BelieverDeviationDeriverNode.class, RegistryKeys.DERIVER_BELIEVER_DEVIATION);
-        deriverNodeConfigurationKeys.put(IntegratorDeviationDeriverNode.class, RegistryKeys.DERIVER_INTEGRATOR_DEVIATION);
-        deriverNodeConfigurationKeys.put(InsecurityDeriverNode.class, RegistryKeys.DERIVER_INSECURITY);
-        deriverNodeConfigurationKeys.put(PersistenceDeriverNode.class, RegistryKeys.DERIVER_PERSISTENCE);
-        deriverNodeConfigurationKeys.put(ReassuranceDeriverNode.class, RegistryKeys.DERIVER_REASSURANCE);
-        deriverNodeConfigurationKeys.put(EpistemicAppraisalDeriverNode.class, RegistryKeys.DERIVER_APPRAISAL);
-        deriverNodeConfigurationKeys.put(ChangeConceptDeriverNode.class, RegistryKeys.DERIVER_CHANGE_CONCEPT);
+        deriverNodeConfigurationKeys.put(CategoryMatchDeriverNode.class, RegistryKey.DERIVER_CATEGORY_MATCH);
+        deriverNodeConfigurationKeys.put(ConformationDeriverNode.class, RegistryKey.DERIVER_CONFORMATION);
+        deriverNodeConfigurationKeys.put(ContextMatchDeriverNode.class, RegistryKey.DERIVER_CONTEXTMATCH);
+        deriverNodeConfigurationKeys.put(BelieverDeviationDeriverNode.class, RegistryKey.DERIVER_BELIEVER_DEVIATION);
+        deriverNodeConfigurationKeys.put(IntegratorDeviationDeriverNode.class, RegistryKey.DERIVER_INTEGRATOR_DEVIATION);
+        deriverNodeConfigurationKeys.put(InsecurityDeriverNode.class, RegistryKey.DERIVER_INSECURITY);
+        deriverNodeConfigurationKeys.put(PersistenceDeriverNode.class, RegistryKey.DERIVER_PERSISTENCE);
+        deriverNodeConfigurationKeys.put(ReassuranceDeriverNode.class, RegistryKey.DERIVER_REASSURANCE);
+        deriverNodeConfigurationKeys.put(EpistemicAppraisalDeriverNode.class, RegistryKey.DERIVER_APPRAISAL);
+        deriverNodeConfigurationKeys.put(ChangeConceptDeriverNode.class, RegistryKey.DERIVER_CHANGE_CONCEPT);
     }
 
     @PostConstruct
@@ -73,7 +73,7 @@ public class DeriverNodeProviderRegistry {
     }
 
     public <D extends DeriverNode> Optional<DeriverNodeFactory<D>> getDeriverNodeProvider(Class<D> deriverNodeClass) {
-        RegistryKeys deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
+        RegistryKey deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
         String configuredImplementation = applicationSettings.getString(deriverNodeConfigurationKey.getKey());
 
         DeriverNodeFactory<D> result = null;

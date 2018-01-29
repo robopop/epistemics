@@ -8,7 +8,7 @@ package selemca.epistemics.mentalworld.registry;
 
 import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
-import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
+import selemca.epistemics.mentalworld.registry.config.RegistryKey;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -17,14 +17,14 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 public abstract class AbstractPluginRegistry<T> {
-    private final RegistryKeys configurationKey;
+    private final RegistryKey configurationKey;
     private final Class<? extends T> addOnClass;
     private final Map<String, T> implementations;
 
     @Autowired
     private Configuration applicationSettings;
 
-    public AbstractPluginRegistry(RegistryKeys configurationKey, Class<? extends T> addOnClass, Map<String, T> implementations) {
+    public AbstractPluginRegistry(RegistryKey configurationKey, Class<? extends T> addOnClass, Map<String, T> implementations) {
         this.configurationKey = configurationKey;
         this.addOnClass = addOnClass;
         this.implementations = implementations;

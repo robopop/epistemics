@@ -9,7 +9,7 @@ package selemca.epistemics.mentalworld.registry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatcher;
-import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
+import selemca.epistemics.mentalworld.registry.config.RegistryKey;
 
 import java.util.Map;
 
@@ -18,6 +18,6 @@ public class CategoryMatcherRegistry extends AbstractPluginRegistry<CategoryMatc
     @SuppressWarnings("SpringJavaAutowiringInspection")
     @Autowired
     public CategoryMatcherRegistry(Map<String, CategoryMatcher> implementations) {
-        super(RegistryKeys.CATEGORY_MATCH_IMPLEMENTATION, CategoryMatcher.class, implementations);
+        super(RegistryKey.CATEGORY_MATCH_IMPLEMENTATION, CategoryMatcher.class, implementations);
     }
 }
