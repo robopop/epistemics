@@ -46,38 +46,38 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
 
     @Override
     public boolean categoryMatch(Collection<String> precludeConcepts) {
-        boolean match;
 
         Set<String> observationFeatures = workingMemory.getObservationFeatures();
         Optional<CategoryMatch> categoryMatchOptional = categoryMatcher.findMatch(beliefSystemGraph, observationFeatures, precludeConcepts, logger);
-        if (categoryMatchOptional.isPresent()) {
-            CategoryMatch foundMatch = categoryMatchOptional.get();
-            workingMemory.setCategoryMatch(foundMatch);
-            logger.debug(foundMatch.toString());
+        return categoryMatchOptional
+            .map(foundMatch -> {
+                workingMemory.setCategoryMatch(foundMatch);
+                logger.debug(foundMatch.toString());
 
-            match = foundMatch.getContributors().size() == workingMemory.getObservationFeatures().size();
-            match &= withinContext(foundMatch);
-            match &= allObservationsWithinReality();
-            logger.debug("Match is " + (match ? "valid." : "invalid."));
-        } else {
-            match = false;
-            logger.debug("No match found.");
-        }
-
-        return match;
+                boolean match = foundMatch.getContributors().size() == workingMemory.getObservationFeatures().size();
+                match &= withinContext(foundMatch);
+                match &= allObservationsWithinReality();
+                logger.debug("Match is " + (match ? "valid." : "invalid."));
+                return match;
+            })
+            .orElseGet(() -> {
+                logger.debug("No match found.");
+                return false;
+            });
     }
 
     private boolean withinContext(CategoryMatch categoryMatch) {
-        boolean withinContext = false;
-        Optional<Concept> contextOptional = beliefModelService.getContext();
-        if (contextOptional.isPresent()) {
-            double distance = new GraphUtil().getDistance(beliefSystemGraph, contextOptional.get(), categoryMatch.getConcept());
-            withinContext = (distance <= contextAssociationMaximumDistance);
-            logger.debug(String.format("Concept %s is %splausible within context %s (distance %s)", categoryMatch.getConcept(), withinContext ? "": "not ", contextOptional.get(), distance));
-        } else {
-            logger.debug("No context is set");
-        }
-        return withinContext;
+        return beliefModelService.getContext()
+            .map(context -> {
+                double distance = new GraphUtil().getDistance(beliefSystemGraph, context, categoryMatch.getConcept());
+                boolean withinContext = (distance <= contextAssociationMaximumDistance);
+                logger.debug(String.format("Concept %s is %splausible within context %s (distance %s)", categoryMatch.getConcept(), withinContext ? "": "not ", context, distance));
+                return withinContext;
+            })
+            .orElseGet(() -> {
+                logger.debug("No context is set");
+                return false;
+            });
     }
 
     private boolean allObservationsWithinReality() {
