@@ -9,9 +9,9 @@ package selemca.epistemics.mentalworld.engine.node;
 import selemca.epistemics.data.entity.Concept;
 
 /**
- * Epistemics of the virtual node: intergrator deviation tolerant
+ * Epistemics of the virtual node: integrator deviation tolerant
  * Decides if willing to deviate from beliefs.
- * Deviation tollerance is not a simple yes or no. System may be willing to deviate for parts
+ * Deviation tolerance is not a simple yes or no. System may be willing to deviate for parts
  * of the observation and for other parts not.
  */
 public interface IntegratorDeviationDeriverNode extends DeriverNode {

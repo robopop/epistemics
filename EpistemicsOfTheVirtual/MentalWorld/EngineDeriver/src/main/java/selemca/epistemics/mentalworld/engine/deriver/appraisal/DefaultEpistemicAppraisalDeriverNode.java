@@ -21,9 +21,6 @@ import java.util.Set;
 
 import static selemca.epistemics.mentalworld.engine.deriver.appraisal.EpistemicAppraisalDeriverNodeSettingsProvider.ACCEPT_AS_REALISTIC_CRITERION;
 
-/**
- * Created by henrizwols on 12-03-15.
- */
 public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalDeriverNode {
     final double ACCEPT_AS_REALISTIC_CRITERION_DEFAULT = 0.4;
 
@@ -54,12 +51,12 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
                 logger.debug(String.format("%s realistic", contribution));
                 realisticContributions.add(contribution);
             } else {
-                // Re-examine unrealistic contribution: if it exeedes criterion, regard realistic after all.
+                // Re-examine unrealistic contribution: if it exceeds criterion, regard realistic after all.
                 if (contribution.getTruthValue() > criterion) {
-                    logger.debug(String.format("%s unrealistic, however it exeedes criterion %s, thus realistic", contribution, criterion));
+                    logger.debug(String.format("%s unrealistic, however it exceeds criterion %s, thus realistic", contribution, criterion));
                     realisticContributions.add(contribution);
                 } else {
-                    logger.debug(String.format("%s unrealistic. It does not exeed criterion %s.", contribution, criterion));
+                    logger.debug(String.format("%s unrealistic. It does not exceed criterion %s.", contribution, criterion));
                     unrealisticContributions.add(contribution);
                 }
             }
