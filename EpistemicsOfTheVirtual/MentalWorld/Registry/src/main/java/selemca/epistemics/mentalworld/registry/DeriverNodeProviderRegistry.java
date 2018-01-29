@@ -17,9 +17,6 @@ import javax.annotation.PostConstruct;
 import java.util.*;
 import java.util.logging.Logger;
 
-/**
- * Created by henrizwols on 05-03-15.
- */
 @Component
 public class DeriverNodeProviderRegistry {
     @Autowired
@@ -63,25 +60,26 @@ public class DeriverNodeProviderRegistry {
         return result;
     }
 
-    private Set<DeriverNodeFactory> getAllImplementations(Class<? extends DeriverNode> deriverNodeClass) {
-        Set<DeriverNodeFactory> result = new HashSet<>();
+    private <D extends DeriverNode> Set<DeriverNodeFactory<D>> getAllImplementations(Class<D> deriverNodeClass) {
+        Set<DeriverNodeFactory<D>> result = new HashSet<>();
         for (DeriverNodeFactory<?> deriverNodeFactory : deriverNodeFactories) {
             if (deriverNodeClass.equals(deriverNodeFactory.getDeriverNodeClass())) {
-                result.add(deriverNodeFactory);
+                //noinspection unchecked
+                result.add((DeriverNodeFactory<D>) deriverNodeFactory);
             }
         }
 
         return result;
     }
 
-    public Optional<DeriverNodeFactory<?>> getDeriverNodeProvider(Class<? extends DeriverNode> deriverNodeClass) {
+    public <D extends DeriverNode> Optional<DeriverNodeFactory<D>> getDeriverNodeProvider(Class<D> deriverNodeClass) {
         String deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
         String configuredImplementation = applicationSettings.getString(deriverNodeConfigurationKey);
 
-        DeriverNodeFactory<?> result = null;
-        Set<DeriverNodeFactory> implementations = getAllImplementations(deriverNodeClass);
+        DeriverNodeFactory<D> result = null;
+        Set<DeriverNodeFactory<D>> implementations = getAllImplementations(deriverNodeClass);
         if (configuredImplementation != null) {
-            for (DeriverNodeFactory<?> deriverNodeFactory : implementations) {
+            for (DeriverNodeFactory<D> deriverNodeFactory : implementations) {
                 if (deriverNodeFactory.getName().equals(configuredImplementation)) {
                     result = deriverNodeFactory;
                 }
