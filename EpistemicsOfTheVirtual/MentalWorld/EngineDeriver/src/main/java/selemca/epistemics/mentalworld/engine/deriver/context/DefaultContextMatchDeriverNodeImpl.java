@@ -18,7 +18,6 @@ import selemca.epistemics.mentalworld.engine.node.ContextMatchDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
 import java.util.Collection;
-import java.util.Optional;
 
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 
@@ -76,12 +75,11 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
     }
 
     private boolean withinCurrentContext(Concept category) {
-        boolean withinContext = false;
-        Optional<Concept> contextOptional = beliefModelService.getContext();
-        if (contextOptional.isPresent()) {
-            double distance = new GraphUtil().getDistance(beliefSystemGraph, contextOptional.get(), category);
-            withinContext = (distance <= contextAssociationMaximumDistance);
-        }
-        return withinContext;
+        return beliefModelService.getContext()
+            .map(context -> {
+                double distance = new GraphUtil().getDistance(beliefSystemGraph, context, category);
+                return (distance <= contextAssociationMaximumDistance);
+            })
+            .orElse(false);
     }
 }

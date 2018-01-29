@@ -9,7 +9,6 @@ package selemca.epistemics.mentalworld.engine.impl;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
@@ -24,7 +23,6 @@ import java.util.*;
 
 @Component("mentalWorldEngine")
 public class MentalWorldEngineImpl implements MentalWorldEngine {
-    public static final String SUBJECT_NAME = "subject";
     public static final int MAXIMUM_TRAVERSALS_DEFAULT = 1;
 
     @Autowired
@@ -71,32 +69,35 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
 
     @Override
     public void acceptObservation(Set<String> observationFeatures, Logger logger) {
-        Optional<Concept> contextOptional = beliefModelService.getContext();
-        if (contextOptional.isPresent()) {
-            VirtualModelEngineState virtualModelEngineState = new VirtualModelEngineState(this, contextOptional.get(), observationFeatures, logger);
-
-            virtualModelEngineState.acceptObservation();
-        } else {
-            logger.info("There is no context. We are mentally blind");
-        }
+        beliefModelService.getContext()
+            .map(context -> {
+                VirtualModelEngineState virtualModelEngineState = new VirtualModelEngineState(this, context, observationFeatures, logger);
+                virtualModelEngineState.acceptObservation();
+                return context;
+            })
+            .orElseGet(() -> {
+                logger.info("There is no context. We are mentally blind");
+                return null;
+            });
     }
 
     @Override
     public boolean acceptObservation(Set<String> observationFeatures, Engine engineSettings, Logger logger) {
-        Optional<Concept> contextOptional = beliefModelService.getContext();
-        if (contextOptional.isPresent()) {
-            MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
-            WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
-            workingMemory.setEngineSettings(engineSettings);
-            workingMemory.setObservationFeatures(observationFeatures);
-            workingMemory.setNewContext(contextOptional.get());
+        return beliefModelService.getContext()
+            .map(context -> {
+                MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
+                WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
+                workingMemory.setEngineSettings(engineSettings);
+                workingMemory.setObservationFeatures(observationFeatures);
+                workingMemory.setNewContext(context);
 
-            mentalWorldModelEngineState.acceptObservation();
-            return mentalWorldModelEngineState.isObservationAccepted();
-        } else {
-            logger.info("There is no context. We are mentally blind");
-            return false;
-        }
+                mentalWorldModelEngineState.acceptObservation();
+                return mentalWorldModelEngineState.isObservationAccepted();
+            })
+            .orElseGet(() -> {
+                logger.info("There is no context. We are mentally blind");
+                return false;
+            });
     }
 
     @Override

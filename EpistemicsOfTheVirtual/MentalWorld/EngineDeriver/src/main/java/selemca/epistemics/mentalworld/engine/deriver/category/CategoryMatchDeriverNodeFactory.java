@@ -14,13 +14,10 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
-import selemca.epistemics.mentalworld.engine.category.CategoryMatcher;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.node.CategoryMatchDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import selemca.epistemics.mentalworld.registry.CategoryMatcherRegistry;
-
-import java.util.Optional;
 
 @Component
 public class CategoryMatchDeriverNodeFactory implements DeriverNodeFactory<CategoryMatchDeriverNode> {
@@ -47,11 +44,8 @@ public class CategoryMatchDeriverNodeFactory implements DeriverNodeFactory<Categ
 
     @Override
     public CategoryMatchDeriverNode createDeriverNode(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger) {
-        Optional<CategoryMatcher> categoryMatcherOptional = categoryMatcherRegistry.getImplementation();
-        if (categoryMatcherOptional.isPresent()) {
-            return new DefaultCategoryMatchDeriverNodeImpl(beliefModelService, beliefSystemGraph, workingMemory, categoryMatcherOptional.get(), logger, applicationSettings);
-        } else {
-            throw new IllegalStateException("No CategoryMatcher found. Failing");
-        }
+        return categoryMatcherRegistry.getImplementation()
+            .map(categoryMatcher -> new DefaultCategoryMatchDeriverNodeImpl(beliefModelService, beliefSystemGraph, workingMemory, categoryMatcher, logger, applicationSettings))
+            .orElseThrow(() -> new IllegalStateException("No CategoryMatcher found. Failing"));
     }
 }
