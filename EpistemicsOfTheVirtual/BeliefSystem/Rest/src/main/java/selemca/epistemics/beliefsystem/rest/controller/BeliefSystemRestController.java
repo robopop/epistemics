@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -241,10 +240,7 @@ public class BeliefSystemRestController {
     public void removeAssociation(@PathVariable(PARAM_CONCEPT_ID) String conceptId, @PathVariable(PARAM_OTHER_CONCEPT_ID) String otherConceptId) {
         Association association = getCurrentAssociation(conceptId, otherConceptId);
         LOG.info("Deleting association: {}", association);
-        Optional<Association> associationOptional = beliefModelService.getAssociation(association.getConcept1(), association.getConcept2());
-        if (associationOptional.isPresent()) {
-            associationRepository.delete(associationOptional.get());
-        }
+        beliefModelService.getAssociation(association.getConcept1(), association.getConcept2()).ifPresent(associationRepository::delete);
     }
 
     private Association getCurrentAssociation(String conceptId, String otherConceptId) {
