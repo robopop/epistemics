@@ -8,7 +8,6 @@ import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
-import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.metaphor.MetaphorProcessor;
 import selemca.epistemics.mentalworld.engine.node.BelieverDeviationDeriverNode;
 import selemca.epistemics.mentalworld.engine.node.CategoryMatchDeriverNode;
@@ -106,10 +105,8 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void categoryMatch() {
-        Optional<CategoryMatchDeriverNode> deriverNodeOptional = getDeriverNode(CategoryMatchDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            CategoryMatchDeriverNode categoryMatchDeriverNode = deriverNodeOptional.get();
-            if (categoryMatchDeriverNode.categoryMatch(triedConcepts)) {
+        getDeriverNode(CategoryMatchDeriverNode.class).ifPresent(node -> {
+            if (node.categoryMatch(triedConcepts)) {
                 conformation();
             } else {
                 CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
@@ -124,37 +121,29 @@ class VirtualModelEngineState implements MentalWorldEngineState {
             if (categoryMatch != null && categoryMatch.getConcept() != null) {
                 triedConcepts.add(categoryMatch.getConcept().getName());
             }
-        }
+        });
    }
 
     private void conformation() {
-        Optional<ConformationDeriverNode> deriverNodeOptional = getDeriverNode(ConformationDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().conformation();
-        }
+        getDeriverNode(ConformationDeriverNode.class).ifPresent(ConformationDeriverNode::conformation);
         accept();
         reassurance();
     }
 
     private void reassurance() {
-        Optional<ReassuranceDeriverNode> deriverNodeOptional = getDeriverNode(ReassuranceDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().reassurance();
-        }
+        getDeriverNode(ReassuranceDeriverNode.class).ifPresent(ReassuranceDeriverNode::reassurance);
     }
 
     private void contextMatch() {
-        Optional<ContextMatchDeriverNode> deriverNodeOptional = getDeriverNode(ContextMatchDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            ContextMatchDeriverNode contextMatchDeriverNode = deriverNodeOptional.get();
-            if (contextMatchDeriverNode.contextMatch()) {
+        getDeriverNode(ContextMatchDeriverNode.class).ifPresent(node -> {
+            if (node.contextMatch()) {
                 believeDeviationTolerance();
             } else {
                 if (workingMemory.getNewContext() != null) {
                     declareContext();
                 }
             }
-        }
+        });
     }
 
     private void declareContext() {
@@ -165,27 +154,23 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void believeDeviationTolerance() {
-        Optional<BelieverDeviationDeriverNode> deriverNodeOptional = getDeriverNode(BelieverDeviationDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            BelieverDeviationDeriverNode believerDeviationDeriverNode = deriverNodeOptional.get();
-            if (believerDeviationDeriverNode.isDeviationTolerant()) {
+        getDeriverNode(BelieverDeviationDeriverNode.class).ifPresent(node -> {
+            if (node.isDeviationTolerant()) {
                 epistemicAppraisal(workingMemory.getCategoryMatch().getConcept());
             } else {
                 persistence();
             }
-        }
+        });
     }
 
     private void epistemicAppraisal(Concept concept) {
         logger.info("Deviation tolerant. Lets examine concept " + workingMemory.getCategoryMatch().getConcept().getName());
-        Optional<EpistemicAppraisalDeriverNode> deriverNodeOptional = getDeriverNode(EpistemicAppraisalDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            EpistemicAppraisalDeriverNode epistemicAppraisalDeriverNode = deriverNodeOptional.get();
-            Collection<Association> realisticContributions = epistemicAppraisalDeriverNode.getRealisticContributions();
+        getDeriverNode(EpistemicAppraisalDeriverNode.class).ifPresent(node -> {
+            Collection<Association> realisticContributions = node.getRealisticContributions();
             falsification(concept, realisticContributions);
-            Collection<Association> unrealisticContributions = epistemicAppraisalDeriverNode.getUnrealisticContributions();
+            Collection<Association> unrealisticContributions = node.getUnrealisticContributions();
             integratorDeviationTolerance(concept, unrealisticContributions);
-        }
+        });
     }
 
     private void falsification(Concept concept, Collection<Association> realisticContributions) {
@@ -197,23 +182,20 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void integratorDeviationTolerance(Concept concept, Collection<Association> unrealisticContributions) {
-        Optional<IntegratorDeviationDeriverNode> deriverNodeOptional = getDeriverNode(IntegratorDeviationDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            IntegratorDeviationDeriverNode integratorDeviationDeriverNode = deriverNodeOptional.get();
+        getDeriverNode(IntegratorDeviationDeriverNode.class).ifPresent(node -> {
             for (Association contribution : unrealisticContributions) {
-                if (integratorDeviationDeriverNode.isWillingToDeviate(concept, contribution.getOtherConcept(concept))) {
+                if (node.isWillingToDeviate(concept, contribution.getOtherConcept(concept))) {
                     metaphorProcessing(contribution);
                 } else {
                     reject(contribution);
                 }
             }
-        }
+        });
     }
 
     private void metaphorProcessing(Association contribution) {
-        Optional<MetaphorProcessor> metaphorProcessorOptional = engine.getMetaphorProcessorRegistry().getImplementation();
-        if (metaphorProcessorOptional.isPresent()) {
-            MetaphorProcessor.MetaphorAssesment metaphorAssesment = metaphorProcessorOptional.get().assesRelation(contribution.getConcept1(), contribution.getConcept2());
+        engine.getMetaphorProcessorRegistry().getImplementation().ifPresent(metaphorProcessor -> {
+            MetaphorProcessor.MetaphorAssesment metaphorAssesment = metaphorProcessor.assesRelation(contribution.getConcept1(), contribution.getConcept2());
             switch (metaphorAssesment) {
                 case ANOMALY:
                     insecurity(contribution);
@@ -225,39 +207,26 @@ class VirtualModelEngineState implements MentalWorldEngineState {
                     changeConcept(contribution, true);
                     break;
             }
-        }
-
+        });
     }
 
     private void persistence() {
-        Optional<PersistenceDeriverNode> deriverNodeOptional = getDeriverNode(PersistenceDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().persistence();
-        }
+        getDeriverNode(PersistenceDeriverNode.class).ifPresent(PersistenceDeriverNode::persistence);
         reject();
         insecurity();
     }
 
     private void insecurity() {
-        Optional<InsecurityDeriverNode> deriverNodeOptional = getDeriverNode(InsecurityDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().insecurity();
-        }
+        getDeriverNode(InsecurityDeriverNode.class).ifPresent(InsecurityDeriverNode::insecurity);
     }
 
     private void insecurity(Association association) {
-        Optional<InsecurityDeriverNode> deriverNodeOptional = getDeriverNode(InsecurityDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().insecurity(association);
-        }
+        getDeriverNode(InsecurityDeriverNode.class).ifPresent(node -> node.insecurity(association));
     }
 
     private void changeConcept(Association association, boolean isMetaphor) {
         logger.info("Change concept " + association);
-        Optional<ChangeConceptDeriverNode> deriverNodeOptional = getDeriverNode(ChangeConceptDeriverNode.class);
-        if (deriverNodeOptional.isPresent()) {
-            deriverNodeOptional.get().changeConcept(association, isMetaphor);
-        }
+        getDeriverNode(ChangeConceptDeriverNode.class).ifPresent(node -> node.changeConcept(association, isMetaphor));
         observationAccepted = true;
     }
 
@@ -277,19 +246,20 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private <D extends DeriverNode> Optional<D> getDeriverNode(Class<D> deliverNodeClass) {
-        D result = deliverNodeClass.cast(deriverNodeMap.get(deliverNodeClass));
+        Optional<D> result = Optional.ofNullable(deriverNodeMap.get(deliverNodeClass)).map(deliverNodeClass::cast);
 
-        if (result == null) {
-            Optional<DeriverNodeFactory<D>> deriverNodeProviderOptional = engine.getDeriverNodeProviderRegistry().getDeriverNodeProvider(deliverNodeClass);
-            if (deriverNodeProviderOptional.isPresent()) {
-                MentalWorldEngine.Logger nodeLogger = new PrefixLogger(logger, deliverNodeClass.getSimpleName() + ": ");
-                result = deriverNodeProviderOptional.get().createDeriverNode(workingMemory, beliefSystemGraph, nodeLogger);
-                if (result != null) {
-                    deriverNodeMap.put(deliverNodeClass, result);
-                }
-            }
+        if (!result.isPresent()) {
+            result = engine.getDeriverNodeProviderRegistry().getDeriverNodeProvider(deliverNodeClass)
+                .map(provider -> {
+                    MentalWorldEngine.Logger nodeLogger = new PrefixLogger(logger, deliverNodeClass.getSimpleName() + ": ");
+                    return provider.createDeriverNode(workingMemory, beliefSystemGraph, nodeLogger);
+                })
+                .map(node -> {
+                    deriverNodeMap.put(deliverNodeClass, node);
+                    return node;
+                });
         }
-        return Optional.ofNullable(result);
+        return result;
     }
 
     private <T> Optional<T> createEngineSettings(Configuration applicationSettings, String path, Class<T> type) {
