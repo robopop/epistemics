@@ -6,19 +6,29 @@
  */
 package selemca.epistemics.mentalworld.registry.config;
 
-public interface RegistryKeys {
+public enum RegistryKeys {
+    DERIVER_CATEGORY_MATCH("engine.categoryMatchDeriver"),
+    DERIVER_CONFORMATION("engine.conformationDeriver"),
+    DERIVER_CONTEXTMATCH("engine.contextMatchDeriver"),
+    DERIVER_BELIEVER_DEVIATION("engine.believerDeviationDeriver"),
+    DERIVER_INTEGRATOR_DEVIATION("engine.integratorDeviationDeriver"),
+    DERIVER_INSECURITY("engine.insecurityDeriver"),
+    DERIVER_PERSISTENCE("engine.persistenceDeriver"),
+    DERIVER_REASSURANCE("engine.reassuranceDeriver"),
+    REALITY_CHECK_IMPLEMENTATION("engine.realityCheck.implementation"),
+    CATEGORY_MATCH_IMPLEMENTATION("engine.categoryMatch.implementation"),
+    METAPHOR_PROSESSOR_IMPLEMENTATION("engine.metaphorProcessing.implementation"),
+    DERIVER_APPRAISAL("engine.epistemicAppraisalDeriver"),
+    DERIVER_CHANGE_CONCEPT("engine.changeConceptDeriver"),
+    ;
 
-    final String DERIVER_CATEGORY_MATCH = "engine.categoryMatchDeriver";
-    final String DERIVER_CONFORMATION = "engine.conformationDeriver";
-    final String DERIVER_CONTEXTMATCH = "engine.contextMatchDeriver";
-    final String DERIVER_BELIEVER_DEVIATION = "engine.believerDeviationDeriver";
-    final String DERIVER_INTEGRATOR_DEVIATION = "engine.integratorDeviationDeriver";
-    final String DERIVER_INSECURITY = "engine.insecurityDeriver";
-    final String DERIVER_PERSISTENCE = "engine.persistenceDeriver";
-    final String DERIVER_REASSURANCE = "engine.reassuranceDeriver";
-    final String REALITY_CHECK_IMPLEMENTATION = "engine.realityCheck.implementation";
-    final String CATEGORY_MATCH_IMPLEMENTATION = "engine.categoryMatch.implementation";
-    final String METAPHOR_PROSESSOR_IMPLEMENTATION = "engine.metaphorProcessing.implementation";
-    final String DERIVER_APPRAISAL = "engine.epistemicAppraisalDeriver";
-    final String DERIVER_CHANGE_CONCEPT = "engine.changeConceptDeriver";
+    private final String key;
+
+    private RegistryKeys(String key) {
+        this.key = key;
+    }
+
+    public String getKey() {
+        return key;
+    }
 }

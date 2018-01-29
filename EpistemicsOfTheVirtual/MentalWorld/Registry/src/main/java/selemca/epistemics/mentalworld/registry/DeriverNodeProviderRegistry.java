@@ -27,7 +27,7 @@ public class DeriverNodeProviderRegistry {
     private List<DeriverNodeFactory> deriverNodeFactories;
 
 
-    private final Map<Class<? extends DeriverNode>, String> deriverNodeConfigurationKeys = new HashMap<>();
+    private final Map<Class<? extends DeriverNode>, RegistryKeys> deriverNodeConfigurationKeys = new HashMap<>();
     {
         deriverNodeConfigurationKeys.put(CategoryMatchDeriverNode.class, RegistryKeys.DERIVER_CATEGORY_MATCH);
         deriverNodeConfigurationKeys.put(ConformationDeriverNode.class, RegistryKeys.DERIVER_CONFORMATION);
@@ -73,8 +73,8 @@ public class DeriverNodeProviderRegistry {
     }
 
     public <D extends DeriverNode> Optional<DeriverNodeFactory<D>> getDeriverNodeProvider(Class<D> deriverNodeClass) {
-        String deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
-        String configuredImplementation = applicationSettings.getString(deriverNodeConfigurationKey);
+        RegistryKeys deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
+        String configuredImplementation = applicationSettings.getString(deriverNodeConfigurationKey.getKey());
 
         DeriverNodeFactory<D> result = null;
         Set<DeriverNodeFactory<D>> implementations = getAllImplementations(deriverNodeClass);

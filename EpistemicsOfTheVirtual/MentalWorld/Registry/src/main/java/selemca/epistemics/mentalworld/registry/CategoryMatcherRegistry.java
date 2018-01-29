@@ -13,9 +13,6 @@ import selemca.epistemics.mentalworld.registry.config.RegistryKeys;
 
 import java.util.Map;
 
-/**
- * Created by henrizwols on 05-03-15.
- */
 @Component
 public class CategoryMatcherRegistry extends AbstractPluginRegistry<CategoryMatcher> {
     @SuppressWarnings("SpringJavaAutowiringInspection")
