@@ -14,6 +14,7 @@ import selemca.epistemics.mentalworld.beliefsystem.repository.*;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component("beliefModelService")
@@ -39,10 +40,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
     public void cascadingDelete(Concept concept) {
         listAssociations(concept).forEach(associationRepository::delete);
         conceptMetaRepository.findByConcept(concept).forEach(conceptMetaRepository::delete);
-        Optional<String> ownStateValueOptional = getOwnStateValue(CONTEXT_PROPERTY);
-        if (ownStateValueOptional.isPresent() && ownStateValueOptional.get().equals(concept.getName())) {
-            setContext(null);
-        }
+        getOwnStateValue(CONTEXT_PROPERTY).filter(value -> value.equals(concept.getName())).ifPresent(ignore -> setContext(null));
         conceptRepository.delete(concept);
     }
 
@@ -67,27 +65,25 @@ public class BeliefModelServiceImpl implements BeliefModelService {
     @Override
     public void fullSave(Association association) {
         // Find persisted Association to update
-        Optional<Association> associationOptional = associationRepository.findByConcept1AndConcept2(association.getConcept1(), association.getConcept2());
-        if (!associationOptional.isPresent()) {
-            associationOptional = associationRepository.findByConcept1AndConcept2(association.getConcept2(), association.getConcept1());
-        }
-        if (associationOptional.isPresent()) {
-            associationOptional.get().setTruthValue(association.getTruthValue());
-            associationRepository.save(associationOptional.get());
-        } else {
-            // Store Concept 1 is not present
-            String concept1Id = association.getConcept1().getName();
-            if (!conceptRepository.findOne(concept1Id).isPresent()) {
-                association.setConcept1(conceptRepository.save(new Concept(concept1Id, 0.8)));
-            }
-            // Store Concept 2 is not present
-            String concept2Id = association.getConcept2().getName();
-            if (!conceptRepository.findOne(concept2Id).isPresent()) {
-                association.setConcept2(conceptRepository.save(new Concept(concept2Id, 0.8)));
-            }
-            association = orderAssociation(association);
-            associationRepository.save(association);
-        }
+        Association newAssociation = getAssociation(association.getConcept1(), association.getConcept2())
+            .map(existing -> {
+                existing.setTruthValue(association.getTruthValue());
+                return existing;
+            })
+            .orElseGet(() -> {
+                // Store Concept 1 is not present
+                String concept1Id = association.getConcept1().getName();
+                if (!conceptRepository.findOne(concept1Id).isPresent()) {
+                    association.setConcept1(conceptRepository.save(new Concept(concept1Id, 0.8)));
+                }
+                // Store Concept 2 is not present
+                String concept2Id = association.getConcept2().getName();
+                if (!conceptRepository.findOne(concept2Id).isPresent()) {
+                    association.setConcept2(conceptRepository.save(new Concept(concept2Id, 0.8)));
+                }
+                return orderAssociation(association);
+            });
+        associationRepository.save(newAssociation);
     }
 
     private Association orderAssociation(Association association) {
@@ -110,12 +106,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
 
     @Override
     public Optional<String> getAssociationType(Concept concept1, Concept concept2) {
-        String relationType = null;
-        Optional<AssociationMeta> associationMetaOptional = getAssociationRelationType(concept1, concept2);
-        if (associationMetaOptional.isPresent()) {
-            relationType = associationMetaOptional.get().getValue();
-        }
-        return Optional.ofNullable(relationType);
+        return getAssociationRelationType(concept1, concept2).map(AssociationMeta::getValue);
     }
 
     private Optional<AssociationMeta> getAssociationRelationType(Concept concept1, Concept concept2) {
@@ -130,10 +121,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
 
     @Override
     public void setAssociationType(Concept concept1, Concept concept2, String relationType) {
-        Optional<AssociationMeta> associationMetaOptional = getAssociationRelationType(concept1, concept2);
-        if (associationMetaOptional.isPresent()) {
-            associationMetaRepository.delete(associationMetaOptional.get());
-        }
+        getAssociationRelationType(concept1, concept2).ifPresent(associationMetaRepository::delete);
 
         AssociationMeta associationMeta = new AssociationMeta(concept1, concept2, RELATION_TYPE, relationType);
         associationMetaRepository.save(associationMeta);
@@ -161,9 +149,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
             }
         } else {
             // conceptMeta should not be present
-            if (contextConceptMetaOptional.isPresent()) {
-                conceptMetaRepository.delete(contextConceptMetaOptional.get());
-            }
+            contextConceptMetaOptional.ifPresent(conceptMetaRepository::delete);
         }
     }
 
@@ -189,21 +175,11 @@ public class BeliefModelServiceImpl implements BeliefModelService {
 
     @Override
     public Optional<Concept> getContext() {
-        Optional<String> ownStateValueOptional = getOwnStateValue(CONTEXT_PROPERTY);
-        Optional<Concept> context = Optional.empty();
-        if (ownStateValueOptional.isPresent()) {
-            context = conceptRepository.findOne(ownStateValueOptional.get());
-        }
-        return context;
+        return getOwnStateValue(CONTEXT_PROPERTY).flatMap((Function<String,Optional<Concept>>) conceptRepository::findOne);
     }
 
     private Optional<String> getOwnStateValue(String property) {
-        Optional<OwnState> ownStatePropertyOptional = ownStateRepository.findOne(property);
-        String value = null;
-        if (ownStatePropertyOptional.isPresent()) {
-            value = ownStatePropertyOptional.get().getValue();
-        }
-        return Optional.ofNullable(value);
+        return ownStateRepository.findOne(property).map(OwnState::getValue);
     }
 
     @Override
