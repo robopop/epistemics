@@ -51,6 +51,11 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
     }
 
     @Override
+    public void apply() {
+        reassurance();
+    }
+
+    @Override
     public void reassurance() {
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Concept matchingConcept = categoryMatch.getConcept();

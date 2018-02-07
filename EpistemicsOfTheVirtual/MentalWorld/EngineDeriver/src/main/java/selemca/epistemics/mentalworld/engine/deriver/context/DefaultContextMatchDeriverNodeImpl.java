@@ -39,6 +39,11 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
     }
 
     @Override
+    public boolean decide() {
+        return contextMatch();
+    }
+
+    @Override
     public boolean contextMatch() {
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         boolean contextMatch = withinCurrentContext(categoryMatch.getConcept());

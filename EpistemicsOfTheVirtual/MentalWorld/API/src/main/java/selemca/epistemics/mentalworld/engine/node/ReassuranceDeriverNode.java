@@ -6,9 +6,6 @@
  */
 package selemca.epistemics.mentalworld.engine.node;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
-public interface ReassuranceDeriverNode extends DeriverNode {
+public interface ReassuranceDeriverNode extends DeriverNode, ActionNode {
     void reassurance();
 }

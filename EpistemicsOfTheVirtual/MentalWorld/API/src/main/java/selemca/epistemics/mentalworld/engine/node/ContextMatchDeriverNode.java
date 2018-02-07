@@ -10,7 +10,7 @@ package selemca.epistemics.mentalworld.engine.node;
  * Epistemics of the virtual node: right context
  * Checks whether found match is whithin context and proposes better context.
  */
-public interface ContextMatchDeriverNode extends DeriverNode {
+public interface ContextMatchDeriverNode extends DeriverNode, DecisionNode {
     /**
      * Checks wether the found match is whithin context. If so returns true. If not finds better context
      * for match, stores it in working memory and returns false.

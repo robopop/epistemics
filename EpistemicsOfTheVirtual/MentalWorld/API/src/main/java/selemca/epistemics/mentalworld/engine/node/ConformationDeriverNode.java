@@ -6,9 +6,6 @@
  */
 package selemca.epistemics.mentalworld.engine.node;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
-public interface ConformationDeriverNode extends DeriverNode {
+public interface ConformationDeriverNode extends DeriverNode, ActionNode {
     void conformation();
 }
