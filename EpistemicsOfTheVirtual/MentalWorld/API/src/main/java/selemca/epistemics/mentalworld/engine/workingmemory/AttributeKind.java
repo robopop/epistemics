@@ -2,6 +2,7 @@ package selemca.epistemics.mentalworld.engine.workingmemory;
 
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.engine.accept.Engine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 
 import java.util.Collections;
@@ -11,6 +12,7 @@ import static selemca.epistemics.mentalworld.engine.workingmemory.Cardinality.*;
 
 public class AttributeKind<T> {
     // WorkingMemory
+    public static final AttributeKind<Engine> ENGINE_SETTINGS = create(Engine.class);
     public static final AttributeKind<String> OBSERVATION_FEATURES = create(String.class, SET);
     public static final AttributeKind<CategoryMatch> CATEGORY_MATCH = create(CategoryMatch.class);
     public static final AttributeKind<Concept> NEW_CONTEXT = create(Concept.class);

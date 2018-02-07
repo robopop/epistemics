@@ -23,6 +23,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.NEW_CONTEXT;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -77,7 +78,7 @@ public class DefaultContextMatchDeriverNodeImplTest extends AbstractDeriverNodeT
         classUnderTest = new DefaultContextMatchDeriverNodeImpl(beliefModelService, workingMemory, logger, applicationSettings);
 
         Assert.assertFalse(classUnderTest.contextMatch());
-        Assert.assertEquals("nature", workingMemory.getNewContext().getName());
+        Assert.assertEquals("nature", workingMemory.get(NEW_CONTEXT).getName());
     }
 
 }

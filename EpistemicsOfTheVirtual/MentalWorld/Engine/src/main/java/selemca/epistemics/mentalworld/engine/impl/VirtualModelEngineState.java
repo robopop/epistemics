@@ -36,6 +36,8 @@ import java.util.function.BiFunction;
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.ENGINE_SETTINGS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.NEW_CONTEXT;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 class VirtualModelEngineState implements MentalWorldEngineState {
@@ -50,7 +52,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         this(engine, createWorkingMemory(context, observationFeatures, null), logger);
         createEngineSettings(engine.getApplicationSettings(), "engine", Engine.class)
                 .map((engineSettings) -> {
-                    workingMemory.setEngineSettings(engineSettings);
+                    workingMemory.set(ENGINE_SETTINGS, engineSettings);
                     return null;
                 });
     }
@@ -73,8 +75,8 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     private static WorkingMemory createWorkingMemory(Concept context, Set<String> observationFeatures, Engine engineSettings) {
         WorkingMemory workingMemory = new WorkingMemory();
         workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
-        workingMemory.setEngineSettings(engineSettings);
-        workingMemory.setNewContext(context);
+        workingMemory.set(ENGINE_SETTINGS, engineSettings);
+        workingMemory.set(NEW_CONTEXT, context);
         return workingMemory;
     }
 
@@ -140,7 +142,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
             if (node.contextMatch()) {
                 believeDeviationTolerance();
             } else {
-                if (workingMemory.getNewContext() != null) {
+                if (workingMemory.get(NEW_CONTEXT) != null) {
                     declareContext();
                 }
             }
@@ -148,7 +150,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void declareContext() {
-        Concept context = workingMemory.getNewContext();
+        Concept context = workingMemory.get(NEW_CONTEXT);
         logger.info("New context: " + context);
         engine.getBeliefModelService().setContext(context.getName());
         categoryMatch();

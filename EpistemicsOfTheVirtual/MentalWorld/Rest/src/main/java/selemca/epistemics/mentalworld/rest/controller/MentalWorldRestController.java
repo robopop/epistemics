@@ -45,6 +45,8 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.ENGINE_SETTINGS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.NEW_CONTEXT;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 @RestController
@@ -142,7 +144,7 @@ public class MentalWorldRestController {
     public void setEngineSettings(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestBody Engine engineSettings, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        workingMemory.setEngineSettings(engineSettings);
+        workingMemory.set(ENGINE_SETTINGS, engineSettings);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ENGINE_SETTINGS, method = GET, produces = APPLICATION_JSON)
@@ -150,7 +152,7 @@ public class MentalWorldRestController {
     public Engine getEngineSettings(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        return workingMemory.getEngineSettings();
+        return workingMemory.get(ENGINE_SETTINGS);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_OBSERVATION_FEATURES, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
@@ -175,7 +177,7 @@ public class MentalWorldRestController {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
         Concept concept = conceptRepository.findOne(conceptId).orElseThrow(() -> new NotFoundException(format("Concept: %s", conceptId)));
-        workingMemory.setNewContext(concept);
+        workingMemory.set(NEW_CONTEXT, concept);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_NEW_CONTEXT, method = GET, produces = APPLICATION_JSON)
@@ -183,7 +185,7 @@ public class MentalWorldRestController {
     public Concept getNewContext(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        return workingMemory.getNewContext();
+        return workingMemory.get(NEW_CONTEXT);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ACCEPT_OBSERVATION, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)

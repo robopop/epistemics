@@ -21,6 +21,7 @@ import java.util.Collection;
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.NEW_CONTEXT;
 
 public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNode {
     final double CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT = 1.0;
@@ -48,7 +49,7 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
             double distanceToConcept = new GraphUtil().getDistance(getBeliefSystemGraph(), context, categoryMatch.getConcept());
             System.out.println(String.format("Nearest context: %s  distance: %s", context, distanceToConcept));
             if (distanceToConcept <= contextAssociationMaximumDistance) {
-                workingMemory.setNewContext(context);
+                workingMemory.set(NEW_CONTEXT, context);
                 logger.debug(String.format("Propose new context: %s (distance %s)", context.getName(), distanceToConcept));
             } else {
                 logger.debug("I don't know a suitable context");

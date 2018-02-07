@@ -21,6 +21,8 @@ import selemca.epistemics.mentalworld.registry.MetaphorProcessorRegistry;
 
 import java.util.*;
 
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.ENGINE_SETTINGS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.NEW_CONTEXT;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 @Component("mentalWorldEngine")
@@ -89,9 +91,9 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
             .map(context -> {
                 MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
                 WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
-                workingMemory.setEngineSettings(engineSettings);
+                workingMemory.set(ENGINE_SETTINGS, engineSettings);
                 workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
-                workingMemory.setNewContext(context);
+                workingMemory.set(NEW_CONTEXT, context);
 
                 mentalWorldModelEngineState.acceptObservation();
                 return mentalWorldModelEngineState.isObservationAccepted();
