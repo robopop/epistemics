@@ -51,7 +51,7 @@ public class DefaultInsecurityDeriverNodeImplTest extends AbstractDeriverNodeTes
     public void testInsecurity() {
         //  Truthvalue for contribution is taken from sample belief system: 0.9
 
-        classUnderTest = new DefaultInsecurityDeriverNodeImpl(workingMemory, beliefModelGraph, logger, sampleBeliefSystem.asConceptRepository(), associationRepository, applicationSettings);
+        classUnderTest = new DefaultInsecurityDeriverNodeImpl(workingMemory, logger, sampleBeliefSystem.asConceptRepository(), associationRepository, applicationSettings);
         classUnderTest.insecurity();
 
         ArgumentCaptor<Association> argument = ArgumentCaptor.forClass(Association.class);
@@ -63,7 +63,7 @@ public class DefaultInsecurityDeriverNodeImplTest extends AbstractDeriverNodeTes
     @Test
     public void testInsecuritySpecific() {
 
-        classUnderTest = new DefaultInsecurityDeriverNodeImpl(workingMemory, beliefModelGraph, logger, sampleBeliefSystem.asConceptRepository(), associationRepository, applicationSettings);
+        classUnderTest = new DefaultInsecurityDeriverNodeImpl(workingMemory, logger, sampleBeliefSystem.asConceptRepository(), associationRepository, applicationSettings);
         Concept bird = new Concept("bird", 0.8);
         Concept eggs = new Concept("eggs", 0.8);
         classUnderTest.insecurity(new Association(bird, eggs, 0.0)); // Truthvalue taken from sample belief system: 0.8

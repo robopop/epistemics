@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import selemca.epistemics.mentalworld.engine.deriver.common.AbstractDeriverNodeTest;
 
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.size;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNodeTest {
     final String ACCEPT_AS_REALISTIC_CRITERION = "engine.epistemicAppraisal.criterion";
@@ -36,8 +38,8 @@ public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNod
         applicationSettings.setProperty(ACCEPT_AS_REALISTIC_CRITERION, 0.2);
         classUnderTest = new DefaultEpistemicAppraisalDeriverNode(workingMemory, logger, realityCheck, applicationSettings);
 
-        Assert.assertEquals(2, classUnderTest.getRealisticContributions().size());
-        Assert.assertEquals(0, classUnderTest.getUnrealisticContributions().size());
+        Assert.assertEquals(2, size(classUnderTest.getRealisticContributions()));
+        Assert.assertEquals(0, size(classUnderTest.getUnrealisticContributions()));
     }
 
     @Test
@@ -45,7 +47,7 @@ public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNod
         applicationSettings.setProperty(ACCEPT_AS_REALISTIC_CRITERION, 0.8);
         classUnderTest = new DefaultEpistemicAppraisalDeriverNode(workingMemory, logger, realityCheck, applicationSettings);
 
-        Assert.assertEquals(1, classUnderTest.getRealisticContributions().size());
-        Assert.assertEquals(1, classUnderTest.getUnrealisticContributions().size());
+        Assert.assertEquals(1, size(classUnderTest.getRealisticContributions()));
+        Assert.assertEquals(1, size(classUnderTest.getUnrealisticContributions()));
     }
 }

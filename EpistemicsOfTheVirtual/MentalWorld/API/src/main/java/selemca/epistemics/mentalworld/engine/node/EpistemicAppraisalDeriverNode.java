@@ -9,15 +9,13 @@ package selemca.epistemics.mentalworld.engine.node;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 
-import java.util.Collection;
-
 /**
  * Epistemics of the virtual node: epistemic appraisal
  */
 public interface EpistemicAppraisalDeriverNode extends DeriverNode {
     Concept getCategory();
 
-    Collection<Association> getRealisticContributions();
+    Iterable<Association> getRealisticContributions();
 
-    Collection<Association> getUnrealisticContributions();
+    Iterable<Association> getUnrealisticContributions();
 }

@@ -58,7 +58,7 @@ public class DefaultContextMatchDeriverNodeImplTest extends AbstractDeriverNodeT
     @Test
     public void testContextMatchCurrentCorrect() {
         beliefModelService.setContext("nature");
-        classUnderTest = new DefaultContextMatchDeriverNodeImpl(beliefModelService, beliefModelGraph, workingMemory, logger, applicationSettings);
+        classUnderTest = new DefaultContextMatchDeriverNodeImpl(beliefModelService, workingMemory, logger, applicationSettings);
 
         Assert.assertTrue(classUnderTest.contextMatch());
     }
@@ -71,7 +71,7 @@ public class DefaultContextMatchDeriverNodeImplTest extends AbstractDeriverNodeT
     @Test
     public void testContextMatchCurrentWrong() {
         beliefModelService.setContext("metro");
-        classUnderTest = new DefaultContextMatchDeriverNodeImpl(beliefModelService, beliefModelGraph, workingMemory, logger, applicationSettings);
+        classUnderTest = new DefaultContextMatchDeriverNodeImpl(beliefModelService, workingMemory, logger, applicationSettings);
 
         Assert.assertFalse(classUnderTest.contextMatch());
         Assert.assertEquals("nature", workingMemory.getNewContext().getName());

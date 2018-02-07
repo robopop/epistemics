@@ -165,14 +165,14 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     private void epistemicAppraisal(Concept concept) {
         logger.info("Deviation tolerant. Lets examine concept " + workingMemory.getCategoryMatch().getConcept().getName());
         getDeriverNode(EpistemicAppraisalDeriverNode.class).ifPresent(node -> {
-            Collection<Association> realisticContributions = node.getRealisticContributions();
+            Iterable<Association> realisticContributions = node.getRealisticContributions();
             falsification(concept, realisticContributions);
-            Collection<Association> unrealisticContributions = node.getUnrealisticContributions();
+            Iterable<Association> unrealisticContributions = node.getUnrealisticContributions();
             integratorDeviationTolerance(concept, unrealisticContributions);
         });
     }
 
-    private void falsification(Concept concept, Collection<Association> realisticContributions) {
+    private void falsification(Concept concept, Iterable<Association> realisticContributions) {
         logger.info("Falsification");
         realisticContributions.forEach(this::insecurity);
         for (Association association : realisticContributions) {
@@ -180,7 +180,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         }
     }
 
-    private void integratorDeviationTolerance(Concept concept, Collection<Association> unrealisticContributions) {
+    private void integratorDeviationTolerance(Concept concept, Iterable<Association> unrealisticContributions) {
         getDeriverNode(IntegratorDeviationDeriverNode.class).ifPresent(node -> {
             for (Association contribution : unrealisticContributions) {
                 if (node.isWillingToDeviate(concept, contribution.getOtherConcept(concept))) {

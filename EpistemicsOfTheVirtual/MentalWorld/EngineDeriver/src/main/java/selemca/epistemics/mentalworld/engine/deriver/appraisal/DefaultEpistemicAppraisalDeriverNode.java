@@ -15,11 +15,9 @@ import selemca.epistemics.mentalworld.engine.node.EpistemicAppraisalDeriverNode;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
 import static selemca.epistemics.mentalworld.engine.deriver.appraisal.EpistemicAppraisalDeriverNodeSettingsProvider.ACCEPT_AS_REALISTIC_CRITERION;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.REALISTIC_CONTRIBUTIONS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.UNREALISTIC_CONTRIBUTIONS;
 
 public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalDeriverNode {
     final double ACCEPT_AS_REALISTIC_CRITERION_DEFAULT = 0.4;
@@ -29,8 +27,6 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
     private final RealityCheck realityCheck;
     private final double criterion;
     private final Concept concept;
-    private final Set<Association> realisticContributions = new HashSet<>();
-    private final Set<Association> unrealisticContributions = new HashSet<>();
 
     public DefaultEpistemicAppraisalDeriverNode(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, RealityCheck realityCheck, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
@@ -49,15 +45,16 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
             Association contribution = new Association(concept, contributor, truthValue);
             if (realityCheck.isReality(truthValue)) {
                 logger.debug(String.format("%s realistic", contribution));
-                realisticContributions.add(contribution);
+                REALISTIC_CONTRIBUTIONS.add(workingMemory, contribution);
             } else {
                 // Re-examine unrealistic contribution: if it exceeds criterion, regard realistic after all.
                 if (contribution.getTruthValue() > criterion) {
                     logger.debug(String.format("%s unrealistic, however it exceeds criterion %s, thus realistic", contribution, criterion));
-                    realisticContributions.add(contribution);
+
+                    REALISTIC_CONTRIBUTIONS.add(workingMemory, contribution);
                 } else {
                     logger.debug(String.format("%s unrealistic. It does not exceed criterion %s.", contribution, criterion));
-                    unrealisticContributions.add(contribution);
+                    UNREALISTIC_CONTRIBUTIONS.add(workingMemory, contribution);
                 }
             }
         }
@@ -69,12 +66,12 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
     }
 
     @Override
-    public Collection<Association> getRealisticContributions() {
-        return realisticContributions;
+    public Iterable<Association> getRealisticContributions() {
+        return REALISTIC_CONTRIBUTIONS.get(workingMemory);
     }
 
     @Override
-    public Collection<Association> getUnrealisticContributions() {
-        return unrealisticContributions;
+    public Iterable<Association> getUnrealisticContributions() {
+        return UNREALISTIC_CONTRIBUTIONS.get(workingMemory);
     }
 }

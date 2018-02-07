@@ -6,7 +6,6 @@
  */
 package selemca.epistemics.mentalworld.engine.deriver.common;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.BaseConfiguration;
 import org.apache.commons.configuration.Configuration;
 import org.mockito.Mock;
@@ -16,6 +15,7 @@ import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
+import selemca.epistemics.mentalworld.engine.config.EngineConfig;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
@@ -30,7 +30,6 @@ public abstract class AbstractDeriverNodeTest {
     protected WorkingMemory workingMemory = new WorkingMemory();
     protected CategoryMatch categoryMatch;
     protected SampleBeliefSystem sampleBeliefSystem = new SampleBeliefSystem();
-    protected Graph<Concept, Association> beliefModelGraph;
     protected BeliefModelService beliefModelService;
 
     @Mock
@@ -49,7 +48,7 @@ public abstract class AbstractDeriverNodeTest {
     protected void initBeliefSystem() {
         List<Concept> concepts = sampleBeliefSystem.asConceptRepository().findAll();
         List<Association> associations = sampleBeliefSystem.asAssociationRepository().findAll();
-        beliefModelGraph = new GraphBuilder(concepts, associations).build();
+        EngineConfig.BELIEF_SYSTEM_GRAPH.add(workingMemory, new GraphBuilder(concepts, associations).build());
         beliefModelService = sampleBeliefSystem.asBeliefModelService();
     }
 
