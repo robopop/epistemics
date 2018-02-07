@@ -7,10 +7,10 @@
 package selemca.epistemics.mentalworld.engine.deriver.insecurity;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptGraph;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
@@ -30,7 +30,6 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     final double INSECURITY_CONVERSE_TO_VALUE_DEFAULT = 0.5;
 
     private final WorkingMemory workingMemory;
-    private final Graph<Concept, Association> beliefSystemGraph;
     private final MentalWorldEngine.Logger logger;
     private final ConceptRepository conceptRepository;
     private final AssociationRepository associationRepository;
@@ -42,13 +41,12 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
 
     public DefaultInsecurityDeriverNodeImpl(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
-        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         this.logger = logger;
         this.conceptRepository = conceptRepository;
         this.associationRepository = associationRepository;
         insecurityDirectAssociationModificationPercentage = applicationSettings.getInt(INSECURITY_DIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE, INSECURITY_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT);
         insecurityConverseToTarget = applicationSettings.getDouble(INSECURITY_CONVERSE_TO_VALUE, INSECURITY_CONVERSE_TO_VALUE_DEFAULT);
-        this.dijkstraShortestPath = new DijkstraShortestPath<>(beliefSystemGraph);
+        this.dijkstraShortestPath = new DijkstraShortestPath<>(getBeliefSystemGraph());
     }
 
     @Override
@@ -82,6 +80,7 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     }
 
     private Optional<Association> getAssociation(Concept concept1, Concept concept2) {
+        ConceptGraph beliefSystemGraph = getBeliefSystemGraph();
         Association result = null;
         List<Association> edges = new ArrayList<>();
         edges.addAll(beliefSystemGraph.getInEdges(concept1));
@@ -109,5 +108,9 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
             truthValue -= (truthValue - target) * modifier;
         }
         return truthValue;
+    }
+
+    private ConceptGraph getBeliefSystemGraph() {
+        return BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
     }
 }

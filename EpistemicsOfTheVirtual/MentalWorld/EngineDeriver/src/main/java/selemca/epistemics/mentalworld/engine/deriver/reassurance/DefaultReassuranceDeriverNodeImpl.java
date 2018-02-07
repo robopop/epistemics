@@ -7,10 +7,10 @@
 package selemca.epistemics.mentalworld.engine.deriver.reassurance;
 
 import edu.uci.ics.jung.algorithms.shortestpath.DijkstraShortestPath;
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptGraph;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
@@ -29,7 +29,6 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
     final int REASSURENCE_INDIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE_DEFAULT = 5;
 
     private final WorkingMemory workingMemory;
-    private final Graph<Concept, Association> beliefSystemGraph;
     private final MentalWorldEngine.Logger logger;
     private final ConceptRepository conceptRepository;
     private final AssociationRepository associationRepository;
@@ -41,7 +40,7 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
 
     public DefaultReassuranceDeriverNodeImpl(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
-        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        ConceptGraph beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         this.logger = logger;
         this.conceptRepository = conceptRepository;
         this.associationRepository = associationRepository;

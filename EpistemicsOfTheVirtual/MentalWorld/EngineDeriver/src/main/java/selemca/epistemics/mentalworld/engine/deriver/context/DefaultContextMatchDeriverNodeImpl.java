@@ -6,10 +6,9 @@
  */
 package selemca.epistemics.mentalworld.engine.deriver.context;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
-import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptGraph;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
@@ -28,14 +27,12 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
     private final WorkingMemory workingMemory;
     private final MentalWorldEngine.Logger logger;
     private final BeliefModelService beliefModelService;
-    private final Graph<Concept, Association> beliefSystemGraph;
     private double contextAssociationMaximumDistance;
 
     public DefaultContextMatchDeriverNodeImpl(BeliefModelService beliefModelService, WorkingMemory workingMemory, MentalWorldEngine.Logger logger, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
         this.logger = logger;
         this.beliefModelService = beliefModelService;
-        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         contextAssociationMaximumDistance = applicationSettings.getDouble(CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE, CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT);
     }
 
@@ -47,7 +44,7 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
         logger.debug(String.format("Category %s %sin current context", categoryMatch.getConcept().getName(), contextMatch ? "" : "not "));
         if (!contextMatch) {
             Concept context = findBestMatchingContext(categoryMatch.getConcept());
-            double distanceToConcept = new GraphUtil().getDistance(beliefSystemGraph, context, categoryMatch.getConcept());
+            double distanceToConcept = new GraphUtil().getDistance(getBeliefSystemGraph(), context, categoryMatch.getConcept());
             System.out.println(String.format("Nearest context: %s  distance: %s", context, distanceToConcept));
             if (distanceToConcept <= contextAssociationMaximumDistance) {
                 workingMemory.setNewContext(context);
@@ -61,6 +58,7 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
 
     public Concept findBestMatchingContext(Concept concept) {
         Collection<Concept> contexts = beliefModelService.listContextConcepts();
+        ConceptGraph beliefSystemGraph = getBeliefSystemGraph();
         GraphUtil graphUtil = new GraphUtil();
 
         Concept nearestContext = null;
@@ -76,11 +74,16 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
     }
 
     private boolean withinCurrentContext(Concept category) {
+        ConceptGraph beliefSystemGraph = getBeliefSystemGraph();
         return beliefModelService.getContext()
             .map(context -> {
                 double distance = new GraphUtil().getDistance(beliefSystemGraph, context, category);
                 return (distance <= contextAssociationMaximumDistance);
             })
             .orElse(false);
+    }
+
+    private ConceptGraph getBeliefSystemGraph() {
+        return BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
     }
 }
