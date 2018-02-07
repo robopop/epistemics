@@ -15,6 +15,8 @@ import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
 import static selemca.epistemics.mentalworld.engine.deriver.integratordeviation.IntegratorDeviationDeriverNodeSettingsProvider.INTEGRATOR_DEVIATION_CRITERION;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CONCEPT;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CONTRIBUTOR;
 
 public class DefaultIntegratorDeviationDeriverNodeImpl implements IntegratorDeviationDeriverNode {
     final double DEVIATION_CRITERION_DEFAULT = 0.4;
@@ -30,8 +32,19 @@ public class DefaultIntegratorDeviationDeriverNodeImpl implements IntegratorDevi
     }
 
     @Override
-    public boolean isWillingToDeviate(Concept concept, Concept contribution) {
+    public boolean decide() {
+//        Concept concept = workingMemory.get(CONCEPT);
+        Concept contribution = workingMemory.get(CONTRIBUTOR);
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
-        return categoryMatch.getContributorScore(contribution) >= criterion;
+        boolean result = categoryMatch.getContributorScore(contribution) >= criterion;
+        logger.info("Willing to deviate: " + result);
+        return result;
+    }
+
+    @Override
+    public boolean isWillingToDeviate(Concept concept, Concept contribution) {
+        workingMemory.set(CONCEPT, concept);
+        workingMemory.set(CONTRIBUTOR, contribution);
+        return decide();
     }
 }

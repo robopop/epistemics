@@ -14,7 +14,7 @@ import selemca.epistemics.data.entity.Concept;
  * Deviation tolerance is not a simple yes or no. System may be willing to deviate for parts
  * of the observation and for other parts not.
  */
-public interface IntegratorDeviationDeriverNode extends DeriverNode {
+public interface IntegratorDeviationDeriverNode extends DeriverNode, DecisionNode {
     /**
      * Returns true iff system is willing to deviate from current belief.
      * @param concept concept under scrutiny

@@ -171,6 +171,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         logger.info("Deviation tolerant. Lets examine concept " + categoryMatch.getConcept().getName());
         getDeriverNode(EpistemicAppraisalDeriverNode.class).ifPresent(node -> {
+            node.apply();
             Iterable<Association> realisticContributions = node.getRealisticContributions();
             falsification(concept, realisticContributions);
             Iterable<Association> unrealisticContributions = node.getUnrealisticContributions();

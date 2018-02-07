@@ -37,6 +37,7 @@ public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNod
     public void testGetRealisticContributionsLowCriterion() {
         applicationSettings.setProperty(ACCEPT_AS_REALISTIC_CRITERION, 0.2);
         classUnderTest = new DefaultEpistemicAppraisalDeriverNode(workingMemory, logger, realityCheck, applicationSettings);
+        classUnderTest.apply();
 
         Assert.assertEquals(2, size(classUnderTest.getRealisticContributions()));
         Assert.assertEquals(0, size(classUnderTest.getUnrealisticContributions()));
@@ -46,6 +47,7 @@ public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNod
     public void testGetRealisticContributionsHighCriterion() {
         applicationSettings.setProperty(ACCEPT_AS_REALISTIC_CRITERION, 0.8);
         classUnderTest = new DefaultEpistemicAppraisalDeriverNode(workingMemory, logger, realityCheck, applicationSettings);
+        classUnderTest.apply();
 
         Assert.assertEquals(1, size(classUnderTest.getRealisticContributions()));
         Assert.assertEquals(1, size(classUnderTest.getUnrealisticContributions()));

@@ -31,7 +31,6 @@ public class AttributeKind<T> {
     public static final AttributeKind<Boolean> IS_METAPHOR = create(Boolean.class);
 
     // EpistemicAppraisalDeriverNode
-    public static final AttributeKind<Concept> CATEGORY = create(Concept.class);
     public static final AttributeKind<Association> REALISTIC_CONTRIBUTIONS = create(Association.class, SET);
     public static final AttributeKind<Association> UNREALISTIC_CONTRIBUTIONS = create(Association.class, SET);
 

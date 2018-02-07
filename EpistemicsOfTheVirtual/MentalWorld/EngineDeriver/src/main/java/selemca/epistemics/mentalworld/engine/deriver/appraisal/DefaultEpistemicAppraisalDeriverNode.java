@@ -27,20 +27,18 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
     private final MentalWorldEngine.Logger logger;
     private final RealityCheck realityCheck;
     private final double criterion;
-    private final Concept concept;
 
     public DefaultEpistemicAppraisalDeriverNode(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, RealityCheck realityCheck, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
         this.logger = logger;
         this.realityCheck = realityCheck;
         this.criterion = applicationSettings.getDouble(ACCEPT_AS_REALISTIC_CRITERION, ACCEPT_AS_REALISTIC_CRITERION_DEFAULT);
-
-        this.concept = workingMemory.get(CATEGORY_MATCH).getConcept();
-        run();
     }
 
-    private void run() {
+    @Override
+    public void apply() {
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
+        Concept concept = categoryMatch.getConcept();
         for (Concept contributor : categoryMatch.getContributors()) {
             double truthValue = categoryMatch.getContributorScore(contributor);
             Association contribution = new Association(concept, contributor, truthValue);
@@ -63,7 +61,7 @@ public class DefaultEpistemicAppraisalDeriverNode implements EpistemicAppraisalD
 
     @Override
     public Concept getCategory() {
-        return concept;
+        return workingMemory.get(CATEGORY_MATCH).getConcept();
     }
 
     @Override
