@@ -29,7 +29,10 @@ public class DefaultBelieverDeviationDeriverNodeImpl implements BelieverDeviatio
         this.workingMemory = workingMemory;
         this.logger = logger;
         this.criterion = applicationSettings.getDouble(BELIEVE_DEVIATION_CRITERION, DEVIATION_CRITERION_DEFAULT);
+    }
 
+    @Override
+    public void apply() {
         examineDeviation();
     }
 
@@ -45,6 +48,11 @@ public class DefaultBelieverDeviationDeriverNodeImpl implements BelieverDeviatio
                 workingMemory.add(WILLING_TO_DEVIATE_CONTRIBUTORS, contribution);
             }
         }
+    }
+
+    @Override
+    public boolean decide() {
+        return isDeviationTolerant();
     }
 
     @Override

@@ -31,6 +31,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testIsDeviationTolerantLowCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.2);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertFalse(classUnderTest.isDeviationTolerant());
     }
 
@@ -38,6 +39,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testIsDeviationTolerantHighCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.8);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertFalse(classUnderTest.isDeviationTolerant());
     }
 
@@ -45,6 +47,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testGetWillingToDeviateContributorsLowCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.2);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertEquals(4, size(classUnderTest.getWillingToDeviateContributors()));
     }
 
@@ -52,6 +55,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testGetWillingToDeviateContributorsHighCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.8);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertEquals(1, size(classUnderTest.getWillingToDeviateContributors()));
     }
 
@@ -59,6 +63,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testGetUnwillingToDeviateContributorsLowCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.2);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertEquals(1, size(classUnderTest.getUnwillingToDeviateContributors()));
     }
 
@@ -66,6 +71,7 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testGetUnwillingToDeviateContributorsHighCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.8);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        classUnderTest.apply();
         Assert.assertEquals(4, size(classUnderTest.getUnwillingToDeviateContributors()));
     }
 

@@ -16,7 +16,7 @@ import java.util.Collection;
  * Deviation tollerance is not a simple yes or no. System may be willing to deviate for parts
  * of the observation and for other parts not.
  */
-public interface BelieverDeviationDeriverNode extends DeriverNode {
+public interface BelieverDeviationDeriverNode extends DeriverNode, ActionNode, DecisionNode {
     /**
      * Returns true iff the system is willing to deviate from its beliefs.
      */

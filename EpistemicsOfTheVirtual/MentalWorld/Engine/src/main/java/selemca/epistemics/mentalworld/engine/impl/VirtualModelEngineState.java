@@ -158,6 +158,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
 
     private void believeDeviationTolerance() {
         getDeriverNode(BelieverDeviationDeriverNode.class).ifPresent(node -> {
+            node.apply();
             if (node.isDeviationTolerant()) {
                 CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
                 epistemicAppraisal(categoryMatch.getConcept());
