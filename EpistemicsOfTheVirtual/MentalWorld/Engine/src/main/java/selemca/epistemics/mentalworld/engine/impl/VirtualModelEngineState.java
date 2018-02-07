@@ -35,6 +35,7 @@ import java.util.function.BiFunction;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 class VirtualModelEngineState implements MentalWorldEngineState {
@@ -62,7 +63,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         this.engine = engine;
         this.workingMemory = workingMemory;
         this.logger = logger;
-        BELIEF_SYSTEM_GRAPH.add(workingMemory, getGraph());
+        workingMemory.set(BELIEF_SYSTEM_GRAPH, getGraph());
     }
 
     public MentalWorldEngine.Logger getLogger() {
@@ -71,7 +72,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
 
     private static WorkingMemory createWorkingMemory(Concept context, Set<String> observationFeatures, Engine engineSettings) {
         WorkingMemory workingMemory = new WorkingMemory();
-        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
+        workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
         workingMemory.setEngineSettings(engineSettings);
         workingMemory.setNewContext(context);
         return workingMemory;
@@ -106,10 +107,11 @@ class VirtualModelEngineState implements MentalWorldEngineState {
 
     private void categoryMatch() {
         getDeriverNode(CategoryMatchDeriverNode.class).ifPresent(node -> {
-            if (node.categoryMatch(triedConcepts)) {
+            boolean match = node.categoryMatch(triedConcepts);
+            CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
+            if (match) {
                 conformation();
             } else {
-                CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
                 if (categoryMatch != null) {
                     logger.debug("Imperfect match: " + categoryMatch);
                     contextMatch();
@@ -117,7 +119,6 @@ class VirtualModelEngineState implements MentalWorldEngineState {
                     logger.info("No match");
                 }
             }
-            CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
             if (categoryMatch != null && categoryMatch.getConcept() != null) {
                 triedConcepts.add(categoryMatch.getConcept().getName());
             }
@@ -156,7 +157,8 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     private void believeDeviationTolerance() {
         getDeriverNode(BelieverDeviationDeriverNode.class).ifPresent(node -> {
             if (node.isDeviationTolerant()) {
-                epistemicAppraisal(workingMemory.getCategoryMatch().getConcept());
+                CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
+                epistemicAppraisal(categoryMatch.getConcept());
             } else {
                 persistence();
             }
@@ -164,7 +166,8 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void epistemicAppraisal(Concept concept) {
-        logger.info("Deviation tolerant. Lets examine concept " + workingMemory.getCategoryMatch().getConcept().getName());
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
+        logger.info("Deviation tolerant. Lets examine concept " + categoryMatch.getConcept().getName());
         getDeriverNode(EpistemicAppraisalDeriverNode.class).ifPresent(node -> {
             Iterable<Association> realisticContributions = node.getRealisticContributions();
             falsification(concept, realisticContributions);
@@ -231,7 +234,8 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void accept() {
-        Concept concept = workingMemory.getCategoryMatch().getConcept();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
+        Concept concept = categoryMatch.getConcept();
         logger.info("Matching concept found: " + concept.getName());
         logger.info("Observation accepted");
         observationAccepted = true;

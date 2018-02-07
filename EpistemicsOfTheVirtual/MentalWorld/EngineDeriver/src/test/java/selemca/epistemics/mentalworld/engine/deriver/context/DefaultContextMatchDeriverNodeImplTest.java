@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -42,7 +43,7 @@ public class DefaultContextMatchDeriverNodeImplTest extends AbstractDeriverNodeT
         applicationSettings.setProperty(MAXIMUM_DISTANCE, 1.0);
 
         Set<String> observedFeatures = new HashSet<>(Arrays.asList("2 legs", "beak", "feathers", "swimming", "webbed toes"));
-        OBSERVATION_FEATURES.addAll(workingMemory, observedFeatures);
+        workingMemory.set(OBSERVATION_FEATURES, observedFeatures);
 
         MockCategoryMatchBuilder builder = new MockCategoryMatchBuilder();
         Optional<Concept> duck = sampleBeliefSystem.asConceptRepository().findOne("duck");
@@ -50,7 +51,7 @@ public class DefaultContextMatchDeriverNodeImplTest extends AbstractDeriverNodeT
         for (String feature : observedFeatures) {
             builder.addContributor(feature, 0.7);
         }
-        workingMemory.setCategoryMatch(builder.build());
+        workingMemory.set(CATEGORY_MATCH, builder.build());
     }
 
     /**

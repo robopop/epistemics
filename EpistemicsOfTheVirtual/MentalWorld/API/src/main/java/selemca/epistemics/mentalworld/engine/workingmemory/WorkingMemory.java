@@ -7,28 +7,19 @@
 package selemca.epistemics.mentalworld.engine.workingmemory;
 
 import selemca.epistemics.data.entity.Concept;
-import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 public class WorkingMemory {
     private final Map<AttributeKind,Bag> attributes = new HashMap<>();
-    private CategoryMatch categoryMatch = null;
     private Concept newContext;
     private Engine engineSettings;
 
     public Map<AttributeKind, Bag> getAttributes() {
         return attributes;
-    }
-
-    public CategoryMatch getCategoryMatch() {
-        return categoryMatch;
-    }
-
-    public void setCategoryMatch(CategoryMatch categoryMatch) {
-        this.categoryMatch = categoryMatch;
     }
 
     public Concept getNewContext() {
@@ -45,5 +36,35 @@ public class WorkingMemory {
 
     public void setEngineSettings(Engine engineSettings) {
         this.engineSettings = engineSettings;
+    }
+
+    public <T> void set(AttributeKind<T> kind, T value) {
+        kind.clear(this);
+        kind.add(this, value);
+    }
+
+    public <T> void set(AttributeKind<T> kind, Iterable<T> value) {
+        kind.clear(this);
+        kind.addAll(this, value);
+    }
+
+    public <T> void add(AttributeKind<T> kind, T item) {
+        kind.add(this, item);
+    }
+
+    public <T> T get(AttributeKind<T> kind) {
+        Iterator<T> it = getAll(kind).iterator();
+        if (!it.hasNext()) {
+            throw new IllegalStateException("Not set");
+        }
+        T result = it.next();
+        if (it.hasNext()) {
+            throw new IllegalStateException("Ambiguous");
+        }
+        return result;
+    }
+
+    public <T> Iterable<T> getAll(AttributeKind<T> kind) {
+        return kind.get(this);
     }
 }

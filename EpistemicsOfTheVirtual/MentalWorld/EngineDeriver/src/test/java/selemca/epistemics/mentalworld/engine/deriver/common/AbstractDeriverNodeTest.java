@@ -25,11 +25,11 @@ import static org.mockito.AdditionalMatchers.geq;
 import static org.mockito.AdditionalMatchers.leq;
 import static org.mockito.Mockito.when;
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 public abstract class AbstractDeriverNodeTest {
     protected WorkingMemory workingMemory = new WorkingMemory();
-    protected CategoryMatch categoryMatch;
     protected SampleBeliefSystem sampleBeliefSystem = new SampleBeliefSystem();
     protected BeliefModelService beliefModelService;
 
@@ -49,7 +49,7 @@ public abstract class AbstractDeriverNodeTest {
     protected void initBeliefSystem() {
         List<Concept> concepts = sampleBeliefSystem.asConceptRepository().findAll();
         List<Association> associations = sampleBeliefSystem.asAssociationRepository().findAll();
-        BELIEF_SYSTEM_GRAPH.add(workingMemory, new GraphBuilder(concepts, associations).build());
+        workingMemory.set(BELIEF_SYSTEM_GRAPH, new GraphBuilder(concepts, associations).build());
         beliefModelService = sampleBeliefSystem.asBeliefModelService();
     }
 
@@ -58,16 +58,20 @@ public abstract class AbstractDeriverNodeTest {
         for (double truthValue : contributorTruthValues) {
             builder.addContributor(truthValue);
         }
-        categoryMatch = builder.build();
-        workingMemory.setCategoryMatch(categoryMatch);
+        CategoryMatch categoryMatch = builder.build();
+        workingMemory.set(CATEGORY_MATCH, categoryMatch);
 
     }
 
     protected void initObservationFeatures(Set<String> observationFeatures) {
-        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
+        workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
     }
 
     protected void initCategoryMatch(CategoryMatch categoryMatch) {
-        workingMemory.setCategoryMatch(categoryMatch);
+        workingMemory.set(CATEGORY_MATCH, categoryMatch);
+    }
+
+    protected CategoryMatch getCategoryMatch() {
+        return workingMemory.get(CATEGORY_MATCH);
     }
 }

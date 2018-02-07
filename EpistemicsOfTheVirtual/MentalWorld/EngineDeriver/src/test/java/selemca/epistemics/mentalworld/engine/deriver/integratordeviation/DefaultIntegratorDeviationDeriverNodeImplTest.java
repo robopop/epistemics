@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.deriver.common.AbstractDeriverNodeTest;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -31,6 +32,7 @@ public class DefaultIntegratorDeviationDeriverNodeImplTest extends AbstractDeriv
         applicationSettings.setProperty(WILLING_TO_DEVIATE, 0.25);
 
         classUnderTest = new DefaultIntegratorDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        CategoryMatch categoryMatch = getCategoryMatch();
         Concept contributor = categoryMatch.getContributors().iterator().next();
         Assert.assertTrue(classUnderTest.isWillingToDeviate(categoryMatch.getConcept(), contributor));
     }
@@ -40,6 +42,7 @@ public class DefaultIntegratorDeviationDeriverNodeImplTest extends AbstractDeriv
         applicationSettings.setProperty(WILLING_TO_DEVIATE, 0.5);
 
         classUnderTest = new DefaultIntegratorDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
+        CategoryMatch categoryMatch = getCategoryMatch();
         Concept contributor = categoryMatch.getContributors().iterator().next();
         Assert.assertFalse(classUnderTest.isWillingToDeviate(categoryMatch.getConcept(), contributor));
     }

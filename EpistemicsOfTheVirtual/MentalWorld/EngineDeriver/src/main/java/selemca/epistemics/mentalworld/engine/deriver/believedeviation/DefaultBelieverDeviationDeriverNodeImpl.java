@@ -14,6 +14,7 @@ import selemca.epistemics.mentalworld.engine.node.BelieverDeviationDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
 import static selemca.epistemics.mentalworld.engine.deriver.believedeviation.BelieverDeviationDeriverNodeSettingsProvider.BELIEVE_DEVIATION_CRITERION;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.UNWILLING_TO_DEVIATE_CONTRIBUTORS;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.WILLING_TO_DEVIATE_CONTRIBUTORS;
 
@@ -33,15 +34,15 @@ public class DefaultBelieverDeviationDeriverNodeImpl implements BelieverDeviatio
     }
 
     private void examineDeviation() {
-        CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Concept bestFit = categoryMatch.getConcept();
         for (Concept contribution : categoryMatch.getContributors()) {
             double truthValue = categoryMatch.getContributorScore(contribution);
             if (truthValue < criterion) {
                 logger.debug(String.format("Unwilling to accept a relation between %s and %s (truth value is %s).", contribution, bestFit, truthValue));
-                UNWILLING_TO_DEVIATE_CONTRIBUTORS.add(workingMemory, contribution);
+                workingMemory.add(UNWILLING_TO_DEVIATE_CONTRIBUTORS, contribution);
             } else {
-                WILLING_TO_DEVIATE_CONTRIBUTORS.add(workingMemory, contribution);
+                workingMemory.add(WILLING_TO_DEVIATE_CONTRIBUTORS, contribution);
             }
         }
     }
@@ -53,11 +54,11 @@ public class DefaultBelieverDeviationDeriverNodeImpl implements BelieverDeviatio
 
     @Override
     public Iterable<Concept> getWillingToDeviateContributors() {
-        return WILLING_TO_DEVIATE_CONTRIBUTORS.get(workingMemory);
+        return workingMemory.getAll(WILLING_TO_DEVIATE_CONTRIBUTORS);
     }
 
     @Override
     public Iterable<Concept> getUnwillingToDeviateContributors() {
-        return UNWILLING_TO_DEVIATE_CONTRIBUTORS.get(workingMemory);
+        return workingMemory.getAll(UNWILLING_TO_DEVIATE_CONTRIBUTORS);
     }
 }

@@ -20,6 +20,7 @@ import java.util.Collection;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 
 public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNode {
     final double CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT = 1.0;
@@ -38,7 +39,7 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
 
     @Override
     public boolean contextMatch() {
-        CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         boolean contextMatch = withinCurrentContext(categoryMatch.getConcept());
 
         logger.debug(String.format("Category %s %sin current context", categoryMatch.getConcept().getName(), contextMatch ? "" : "not "));
@@ -84,6 +85,6 @@ public class DefaultContextMatchDeriverNodeImpl implements ContextMatchDeriverNo
     }
 
     private ConceptGraph getBeliefSystemGraph() {
-        return BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        return workingMemory.get(BELIEF_SYSTEM_GRAPH);
     }
 }

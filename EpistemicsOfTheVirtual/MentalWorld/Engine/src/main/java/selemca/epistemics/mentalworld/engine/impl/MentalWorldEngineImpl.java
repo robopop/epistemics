@@ -90,7 +90,7 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
                 MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
                 WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
                 workingMemory.setEngineSettings(engineSettings);
-                OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
+                workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
                 workingMemory.setNewContext(context);
 
                 mentalWorldModelEngineState.acceptObservation();

@@ -158,7 +158,7 @@ public class MentalWorldRestController {
     public void setObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestBody Set<String> observationFeatures, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
+        workingMemory.set(OBSERVATION_FEATURES, observationFeatures);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_OBSERVATION_FEATURES, method = GET, produces = APPLICATION_JSON)
@@ -166,7 +166,7 @@ public class MentalWorldRestController {
     public Iterable<String> getObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        return OBSERVATION_FEATURES.get(workingMemory);
+        return workingMemory.getAll(OBSERVATION_FEATURES);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_NEW_CONTEXT, method = POST)

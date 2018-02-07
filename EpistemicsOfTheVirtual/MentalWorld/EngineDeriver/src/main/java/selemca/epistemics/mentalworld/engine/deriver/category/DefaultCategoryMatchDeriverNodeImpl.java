@@ -25,6 +25,7 @@ import java.util.stream.Collectors;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.size;
 
@@ -48,12 +49,12 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     @Override
     public boolean categoryMatch(Collection<String> precludeConcepts) {
 
-        Iterable<String> observationFeatures = OBSERVATION_FEATURES.get(workingMemory);
-        ConceptGraph beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        Iterable<String> observationFeatures = workingMemory.getAll(OBSERVATION_FEATURES);
+        ConceptGraph beliefSystemGraph = workingMemory.get(BELIEF_SYSTEM_GRAPH);
         Optional<CategoryMatch> categoryMatchOptional = categoryMatcher.findMatch(beliefSystemGraph, observationFeatures, precludeConcepts, logger);
         return categoryMatchOptional
             .map(foundMatch -> {
-                workingMemory.setCategoryMatch(foundMatch);
+                workingMemory.set(CATEGORY_MATCH, foundMatch);
                 logger.debug(foundMatch.toString());
 
                 boolean match = foundMatch.getContributors().size() == size(observationFeatures);
@@ -69,7 +70,7 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     }
 
     private boolean withinContext(CategoryMatch categoryMatch) {
-        ConceptGraph beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        ConceptGraph beliefSystemGraph = workingMemory.get(BELIEF_SYSTEM_GRAPH);
         return beliefModelService.getContext()
             .map(context -> {
                 double distance = new GraphUtil().getDistance(beliefSystemGraph, context, categoryMatch.getConcept());
@@ -84,7 +85,7 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     }
 
     private boolean allObservationsWithinReality() {
-        CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Set<Concept> contributors = categoryMatch.getContributors();
 
         Set<Concept> withinReality = contributors.stream()

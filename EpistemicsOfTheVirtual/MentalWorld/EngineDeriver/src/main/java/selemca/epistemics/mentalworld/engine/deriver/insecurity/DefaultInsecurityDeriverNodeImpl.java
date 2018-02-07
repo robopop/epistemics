@@ -24,6 +24,7 @@ import java.util.Optional;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.insecurity.InsecurityDeriverNodeSettingsProvider.*;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 
 public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     final int INSECURITY_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT = 20;
@@ -51,7 +52,7 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
 
     @Override
     public void insecurity() {
-        CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Concept bestFit = categoryMatch.getConcept();
         for (Concept contributor : categoryMatch.getContributors()) {
             Optional<Association> associationOptional = getAssociation(bestFit, contributor);
@@ -111,6 +112,6 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     }
 
     private ConceptGraph getBeliefSystemGraph() {
-        return BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        return workingMemory.get(BELIEF_SYSTEM_GRAPH);
     }
 }

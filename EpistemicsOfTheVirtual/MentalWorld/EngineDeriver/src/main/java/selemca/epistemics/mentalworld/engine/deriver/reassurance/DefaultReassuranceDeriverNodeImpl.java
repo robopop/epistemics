@@ -23,6 +23,7 @@ import java.util.List;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.reassurance.ReassuranceDeriverNodeSettingsProvider.*;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 
 public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode {
     final int REASSURENCE_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT = 20;
@@ -40,7 +41,7 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
 
     public DefaultReassuranceDeriverNodeImpl(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
-        ConceptGraph beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
+        ConceptGraph beliefSystemGraph = workingMemory.get(BELIEF_SYSTEM_GRAPH);
         this.logger = logger;
         this.conceptRepository = conceptRepository;
         this.associationRepository = associationRepository;
@@ -51,7 +52,7 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
 
     @Override
     public void reassurance() {
-        CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
+        CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Concept matchingConcept = categoryMatch.getConcept();
         for (Concept contributor : categoryMatch.getContributors()) {
             modifyAssociationPath(matchingConcept, contributor);

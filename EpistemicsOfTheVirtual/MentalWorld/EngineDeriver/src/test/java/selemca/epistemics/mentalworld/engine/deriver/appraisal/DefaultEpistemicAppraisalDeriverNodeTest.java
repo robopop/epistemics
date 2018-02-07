@@ -30,7 +30,7 @@ public class DefaultEpistemicAppraisalDeriverNodeTest extends AbstractDeriverNod
     @Test
     public void testGetCategory() {
         classUnderTest = new DefaultEpistemicAppraisalDeriverNode(workingMemory, logger, realityCheck, applicationSettings);
-        Assert.assertSame(categoryMatch.getConcept(), classUnderTest.getCategory());
+        Assert.assertSame(getCategoryMatch().getConcept(), classUnderTest.getCategory());
     }
 
     @Test
