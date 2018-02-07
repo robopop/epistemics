@@ -8,10 +8,7 @@ package selemca.epistemics.mentalworld.engine.node;
 
 import selemca.epistemics.data.entity.Association;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
-public interface InsecurityDeriverNode extends DeriverNode {
+public interface InsecurityDeriverNode extends DeriverNode, ActionNode {
     /**
      * Insecurity about the given association
      */

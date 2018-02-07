@@ -9,6 +9,7 @@ package selemca.epistemics.mentalworld.engine.workingmemory;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Optional;
 
 public class WorkingMemory {
     private final Map<AttributeKind,Bag> attributes = new HashMap<>();
@@ -32,15 +33,19 @@ public class WorkingMemory {
     }
 
     public <T> T get(AttributeKind<T> kind) {
+        return getOptional(kind).orElseThrow(() -> new IllegalStateException("Not set"));
+    }
+
+    public <T> Optional<T> getOptional(AttributeKind<T> kind) {
         Iterator<T> it = getAll(kind).iterator();
         if (!it.hasNext()) {
-            throw new IllegalStateException("Not set");
+            return Optional.empty();
         }
         T result = it.next();
         if (it.hasNext()) {
             throw new IllegalStateException("Ambiguous");
         }
-        return result;
+        return Optional.of(result);
     }
 
     public <T> Iterable<T> getAll(AttributeKind<T> kind) {

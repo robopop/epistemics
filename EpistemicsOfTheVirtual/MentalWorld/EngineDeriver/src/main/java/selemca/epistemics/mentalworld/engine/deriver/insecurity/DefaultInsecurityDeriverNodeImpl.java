@@ -21,9 +21,13 @@ import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.insecurity.InsecurityDeriverNodeSettingsProvider.*;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.ASSOCIATION;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 
 public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
@@ -51,23 +55,46 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     }
 
     @Override
+    public void apply() {
+        workingMemory.getOptional(ASSOCIATION)
+            .map(nonVoidConsumer(this::insecurity))
+            .orElseGet(nonVoid(this::insecurity));
+    }
+
+    public <T> Function<T,Object> nonVoidConsumer(Consumer<T> consumer) {
+        return t -> {
+            consumer.accept(t);
+            return null;
+        };
+    }
+
+    public Supplier<Object> nonVoid(Runnable runnable) {
+        return () -> {
+            runnable.run();
+            return null;
+        };
+    }
+
+    @Override
     public void insecurity() {
         CategoryMatch categoryMatch = workingMemory.get(CATEGORY_MATCH);
         Concept bestFit = categoryMatch.getConcept();
         for (Concept contributor : categoryMatch.getContributors()) {
-            Optional<Association> associationOptional = getAssociation(bestFit, contributor);
-            Association association = associationOptional.orElse(createAssociation(bestFit, contributor, categoryMatch.getContributorScore(contributor)));
-            modifyAssociation(association, insecurityConverseToTarget, insecurityDirectAssociationModificationPercentage);
-            logger.debug(String.format("Detered association(s) from %s to %s", contributor.getName(), bestFit.getName()));
+            insecurity(bestFit, contributor, categoryMatch.getContributorScore(contributor));
         }
     }
 
     @Override
     public void insecurity(Association association) {
-        Optional<Association> associationOptional = getAssociation(association.getConcept1(), association.getConcept2());
-        Association graphAssociation = associationOptional.orElse(createAssociation(association.getConcept1(), association.getConcept2(), association.getTruthValue()));
+        insecurity(association.getConcept1(), association.getConcept2(), association.getTruthValue());
+
+    }
+
+    public void insecurity(Concept concept1, Concept concept2, double truthValue) {
+        Optional<Association> associationOptional = getAssociation(concept1, concept2);
+        Association graphAssociation = associationOptional.orElse(createAssociation(concept1, concept2, truthValue));
         modifyAssociation(graphAssociation, insecurityConverseToTarget, insecurityDirectAssociationModificationPercentage);
-        logger.debug(String.format("Detered association(s) from %s to %s", graphAssociation.getConcept1().getName(), graphAssociation.getConcept2().getName()));
+        logger.debug(String.format("Deterred association(s) from %s to %s", graphAssociation.getConcept1().getName(), graphAssociation.getConcept2().getName()));
 
     }
 
