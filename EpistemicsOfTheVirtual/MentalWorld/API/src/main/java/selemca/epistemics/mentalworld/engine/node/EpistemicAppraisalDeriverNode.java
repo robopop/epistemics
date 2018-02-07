@@ -12,7 +12,7 @@ import selemca.epistemics.data.entity.Concept;
 /**
  * Epistemics of the virtual node: epistemic appraisal
  */
-public interface EpistemicAppraisalDeriverNode extends DeriverNode, ActionNode {
+public interface EpistemicAppraisalDeriverNode extends ActionNode {
     Concept getCategory();
 
     Iterable<Association> getRealisticContributions();

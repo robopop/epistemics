@@ -1,5 +1,5 @@
 package selemca.epistemics.mentalworld.engine.node;
 
-public interface DecisionNode {
+public interface DecisionNode extends DeriverNode {
     boolean decide();
 }

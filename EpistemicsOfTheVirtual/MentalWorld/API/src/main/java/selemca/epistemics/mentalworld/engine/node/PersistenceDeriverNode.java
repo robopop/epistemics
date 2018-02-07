@@ -6,6 +6,6 @@
  */
 package selemca.epistemics.mentalworld.engine.node;
 
-public interface PersistenceDeriverNode extends DeriverNode, ActionNode {
+public interface PersistenceDeriverNode extends ActionNode {
     void persistence();
 }

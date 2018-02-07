@@ -8,7 +8,7 @@ package selemca.epistemics.mentalworld.engine.node;
 
 import selemca.epistemics.data.entity.Association;
 
-public interface ChangeConceptDeriverNode extends DeriverNode, ActionNode {
+public interface ChangeConceptDeriverNode extends ActionNode {
     /**
      * Change the given concept according to the given realistic contribution
      */

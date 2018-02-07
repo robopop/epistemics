@@ -12,7 +12,7 @@ import java.util.Collection;
  * Epistemics of the virtual node: category match
  * Finds concepts that match observed features
  */
-public interface CategoryMatchDeriverNode extends DeriverNode, DecisionNode {
+public interface CategoryMatchDeriverNode extends DecisionNode {
     /**
      * Finds a matching concept for the observed features, stores it in working memory
      * @return true iff the found match matches all observed features and is within context.

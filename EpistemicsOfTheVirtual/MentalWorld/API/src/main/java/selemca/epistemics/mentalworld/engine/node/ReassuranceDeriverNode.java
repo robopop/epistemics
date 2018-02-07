@@ -6,6 +6,6 @@
  */
 package selemca.epistemics.mentalworld.engine.node;
 
-public interface ReassuranceDeriverNode extends DeriverNode, ActionNode {
+public interface ReassuranceDeriverNode extends ActionNode {
     void reassurance();
 }
