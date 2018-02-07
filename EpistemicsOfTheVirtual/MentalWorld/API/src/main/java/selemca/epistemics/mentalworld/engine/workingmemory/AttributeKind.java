@@ -80,6 +80,10 @@ public class AttributeKind<T> {
         values.add(item);
     }
 
+    public void addAll(WorkingMemory workingMemory, Iterable<? extends T> items) {
+        items.forEach(item -> this.add(workingMemory, item));
+    }
+
     public void clear(WorkingMemory workingMemory) {
         Bag values = workingMemory.getAttributes().get(this);
         if (values != null) {

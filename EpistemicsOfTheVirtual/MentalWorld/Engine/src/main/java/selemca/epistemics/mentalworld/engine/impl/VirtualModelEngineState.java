@@ -35,6 +35,7 @@ import java.util.function.BiFunction;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 class VirtualModelEngineState implements MentalWorldEngineState {
     private final MentalWorldEngineImpl engine;
@@ -70,7 +71,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
 
     private static WorkingMemory createWorkingMemory(Concept context, Set<String> observationFeatures, Engine engineSettings) {
         WorkingMemory workingMemory = new WorkingMemory();
-        workingMemory.setObservationFeatures(observationFeatures);
+        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
         workingMemory.setEngineSettings(engineSettings);
         workingMemory.setNewContext(context);
         return workingMemory;

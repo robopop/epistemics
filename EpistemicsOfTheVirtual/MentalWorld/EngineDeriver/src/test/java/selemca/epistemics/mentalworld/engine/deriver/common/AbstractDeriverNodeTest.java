@@ -15,7 +15,6 @@ import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
-import selemca.epistemics.mentalworld.engine.config.EngineConfig;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
@@ -25,6 +24,8 @@ import java.util.Set;
 import static org.mockito.AdditionalMatchers.geq;
 import static org.mockito.AdditionalMatchers.leq;
 import static org.mockito.Mockito.when;
+import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 public abstract class AbstractDeriverNodeTest {
     protected WorkingMemory workingMemory = new WorkingMemory();
@@ -48,7 +49,7 @@ public abstract class AbstractDeriverNodeTest {
     protected void initBeliefSystem() {
         List<Concept> concepts = sampleBeliefSystem.asConceptRepository().findAll();
         List<Association> associations = sampleBeliefSystem.asAssociationRepository().findAll();
-        EngineConfig.BELIEF_SYSTEM_GRAPH.add(workingMemory, new GraphBuilder(concepts, associations).build());
+        BELIEF_SYSTEM_GRAPH.add(workingMemory, new GraphBuilder(concepts, associations).build());
         beliefModelService = sampleBeliefSystem.asBeliefModelService();
     }
 
@@ -63,7 +64,7 @@ public abstract class AbstractDeriverNodeTest {
     }
 
     protected void initObservationFeatures(Set<String> observationFeatures) {
-        workingMemory.setObservationFeatures(observationFeatures);
+        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
     }
 
     protected void initCategoryMatch(CategoryMatch categoryMatch) {

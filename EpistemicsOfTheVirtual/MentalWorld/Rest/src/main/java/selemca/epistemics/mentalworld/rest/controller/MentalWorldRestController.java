@@ -45,6 +45,7 @@ import java.util.UUID;
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.springframework.web.bind.annotation.RequestMethod.*;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
 
 @RestController
 @RequestMapping(MentalWorldRestController.PATH_PREFIX)
@@ -157,15 +158,15 @@ public class MentalWorldRestController {
     public void setObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, @RequestBody Set<String> observationFeatures, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        workingMemory.setObservationFeatures(observationFeatures);
+        OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_OBSERVATION_FEATURES, method = GET, produces = APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Set<String> getObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
+    public Iterable<String> getObservationFeatures(@PathVariable(PATH_ID_NAME) String appraisalId, HttpSession httpSession) {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
-        return workingMemory.getObservationFeatures();
+        return OBSERVATION_FEATURES.get(workingMemory);
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_NEW_CONTEXT, method = POST)

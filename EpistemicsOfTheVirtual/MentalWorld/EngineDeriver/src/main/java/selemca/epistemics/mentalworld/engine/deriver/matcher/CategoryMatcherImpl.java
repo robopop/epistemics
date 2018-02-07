@@ -20,6 +20,8 @@ import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 import selemca.epistemics.mentalworld.registry.RealityCheckRegistry;
 
 import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Component("categoryMatcher.default")
 public class CategoryMatcherImpl implements CategoryMatcher {
@@ -29,21 +31,22 @@ public class CategoryMatcherImpl implements CategoryMatcher {
     private RealityCheckRegistry realityCheckRegistry;
 
     @Override
-    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Set<String> features, MentalWorldEngine.Logger logger) {
+    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, MentalWorldEngine.Logger logger) {
         return findMatch(beliefSystemGraph, features, Collections.emptyList(), logger);
     }
 
     @Override
-    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Set<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger) {
+    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger) {
         Set<Concept> featureConcepts = getFeatureConcepts(beliefSystemGraph, features);
         Set<Concept> candidateMatches = getVicinity(beliefSystemGraph, featureConcepts);
         return findMatch(beliefSystemGraph, candidateMatches, featureConcepts, precludeConcepts, logger);
     }
 
-    private Set<Concept> getFeatureConcepts(Graph<Concept, Association> beliefSystemGraph, Set<String> features) {
+    private Set<Concept> getFeatureConcepts(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features) {
+        Set<String> featureSet = StreamSupport.stream(features.spliterator(), false).collect(Collectors.toSet());
         Set<Concept> concepts = new HashSet<>();
         for (Concept concept : beliefSystemGraph.getVertices()) {
-            if (features.contains(concept.getName())) {
+            if (featureSet.contains(concept.getName())) {
                 concepts.add(concept);
             }
         }

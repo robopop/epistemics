@@ -21,6 +21,8 @@ import selemca.epistemics.mentalworld.registry.MetaphorProcessorRegistry;
 
 import java.util.*;
 
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
+
 @Component("mentalWorldEngine")
 public class MentalWorldEngineImpl implements MentalWorldEngine {
     public static final int MAXIMUM_TRAVERSALS_DEFAULT = 1;
@@ -88,7 +90,7 @@ public class MentalWorldEngineImpl implements MentalWorldEngine {
                 MentalWorldEngineState mentalWorldModelEngineState = createState(logger);
                 WorkingMemory workingMemory = mentalWorldModelEngineState.getWorkingMemory();
                 workingMemory.setEngineSettings(engineSettings);
-                workingMemory.setObservationFeatures(observationFeatures);
+                OBSERVATION_FEATURES.addAll(workingMemory, observationFeatures);
                 workingMemory.setNewContext(context);
 
                 mentalWorldModelEngineState.acceptObservation();

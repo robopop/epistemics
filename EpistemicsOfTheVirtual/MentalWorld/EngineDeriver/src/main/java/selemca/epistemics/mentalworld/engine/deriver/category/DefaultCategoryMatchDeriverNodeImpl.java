@@ -21,9 +21,12 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.size;
 
 public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriverNode {
     final double CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT = 1.0;
@@ -45,7 +48,7 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     @Override
     public boolean categoryMatch(Collection<String> precludeConcepts) {
 
-        Set<String> observationFeatures = workingMemory.getObservationFeatures();
+        Iterable<String> observationFeatures = OBSERVATION_FEATURES.get(workingMemory);
         ConceptGraph beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         Optional<CategoryMatch> categoryMatchOptional = categoryMatcher.findMatch(beliefSystemGraph, observationFeatures, precludeConcepts, logger);
         return categoryMatchOptional
@@ -53,7 +56,7 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
                 workingMemory.setCategoryMatch(foundMatch);
                 logger.debug(foundMatch.toString());
 
-                boolean match = foundMatch.getContributors().size() == workingMemory.getObservationFeatures().size();
+                boolean match = foundMatch.getContributors().size() == size(observationFeatures);
                 match &= withinContext(foundMatch);
                 match &= allObservationsWithinReality();
                 logger.debug("Match is " + (match ? "valid." : "invalid."));
@@ -84,13 +87,10 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
         CategoryMatch categoryMatch = workingMemory.getCategoryMatch();
         Set<Concept> contributors = categoryMatch.getContributors();
 
-        Set<Concept> withinReality = new HashSet<>();
+        Set<Concept> withinReality = contributors.stream()
+                .filter(categoryMatch::withinReality)
+                .collect(Collectors.toSet());
 
-        for (Concept contributor : contributors) {
-            if (categoryMatch.withinReality(contributor)) {
-                withinReality.add(contributor);
-            }
-        }
         Set<Concept> notWithinReality = new HashSet<>(contributors);
         notWithinReality.removeAll(withinReality);
 

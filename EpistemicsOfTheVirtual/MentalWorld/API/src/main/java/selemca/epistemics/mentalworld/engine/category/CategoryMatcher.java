@@ -13,12 +13,8 @@ import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 
 import java.util.Collection;
 import java.util.Optional;
-import java.util.Set;
 
-/**
- * Created by henrizwols on 05-03-15.
- */
 public interface CategoryMatcher {
-    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Set<String> features, MentalWorldEngine.Logger logger);
-    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Set<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger);
+    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, MentalWorldEngine.Logger logger);
+    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger);
 }
