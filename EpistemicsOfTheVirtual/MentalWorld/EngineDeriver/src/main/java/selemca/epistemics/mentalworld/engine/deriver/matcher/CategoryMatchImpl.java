@@ -12,9 +12,6 @@ import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 
 import java.util.*;
 
-/**
- * Created by henrizwols on 06-03-15.
- */
 public class CategoryMatchImpl implements CategoryMatch {
     private final Concept concept;
     private final RealityCheck realityCheck;
@@ -45,14 +42,14 @@ public class CategoryMatchImpl implements CategoryMatch {
     public double getMatchScore() {
         double inverseScore = 1.0;
         for (Double truthValue : contributions.values()) {
-            inverseScore *= (1.0 - truthValue.doubleValue());
+            inverseScore *= (1.0 - truthValue);
         }
         return 1.0 - inverseScore;
     }
 
     public double getContributorScore(Concept contributor) {
         Double score = contributions.get(contributor);
-        return score == null ? 0 : score.doubleValue();
+        return score == null ? 0 : score;
     }
 
     public boolean withinReality(Concept contributor) {

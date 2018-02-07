@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
+import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 
 public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriverNode {
@@ -35,12 +36,12 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     private BeliefModelService beliefModelService;
     private double contextAssociationMaximumDistance;
 
-    public DefaultCategoryMatchDeriverNodeImpl(BeliefModelService beliefModelService, Graph<Concept, Association> beliefSystemGraph, WorkingMemory workingMemory, CategoryMatcher categoryMatcher, MentalWorldEngine.Logger logger, Configuration applicationSettings) {
+    public DefaultCategoryMatchDeriverNodeImpl(BeliefModelService beliefModelService, WorkingMemory workingMemory, CategoryMatcher categoryMatcher, MentalWorldEngine.Logger logger, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
         this.categoryMatcher = categoryMatcher;
         this.logger = logger;
         this.beliefModelService = beliefModelService;
-        this.beliefSystemGraph = beliefSystemGraph;
+        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         contextAssociationMaximumDistance = applicationSettings.getDouble(CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE, CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE_DEFAULT);
     }
 

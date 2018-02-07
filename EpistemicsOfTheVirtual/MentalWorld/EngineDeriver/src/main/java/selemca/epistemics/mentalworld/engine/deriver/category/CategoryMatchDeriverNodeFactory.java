@@ -6,12 +6,9 @@
  */
 package selemca.epistemics.mentalworld.engine.deriver.category;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import selemca.epistemics.data.entity.Association;
-import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
@@ -43,9 +40,9 @@ public class CategoryMatchDeriverNodeFactory implements DeriverNodeFactory<Categ
     }
 
     @Override
-    public CategoryMatchDeriverNode createDeriverNode(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger) {
+    public CategoryMatchDeriverNode createDeriverNode(WorkingMemory workingMemory, MentalWorldEngine.Logger logger) {
         return categoryMatcherRegistry.getImplementation()
-            .map(categoryMatcher -> new DefaultCategoryMatchDeriverNodeImpl(beliefModelService, beliefSystemGraph, workingMemory, categoryMatcher, logger, applicationSettings))
+            .map(categoryMatcher -> new DefaultCategoryMatchDeriverNodeImpl(beliefModelService, workingMemory, categoryMatcher, logger, applicationSettings))
             .orElseThrow(() -> new IllegalStateException("No CategoryMatcher found. Failing"));
     }
 }

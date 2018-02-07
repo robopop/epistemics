@@ -22,11 +22,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.insecurity.InsecurityDeriverNodeSettingsProvider.*;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
 public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
     final int INSECURITY_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT = 20;
     final double INSECURITY_CONVERSE_TO_VALUE_DEFAULT = 0.5;
@@ -42,9 +40,9 @@ public class DefaultInsecurityDeriverNodeImpl implements InsecurityDeriverNode {
 
     private final DijkstraShortestPath dijkstraShortestPath;
 
-    public DefaultInsecurityDeriverNodeImpl(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
+    public DefaultInsecurityDeriverNodeImpl(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
-        this.beliefSystemGraph = beliefSystemGraph;
+        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         this.logger = logger;
         this.conceptRepository = conceptRepository;
         this.associationRepository = associationRepository;

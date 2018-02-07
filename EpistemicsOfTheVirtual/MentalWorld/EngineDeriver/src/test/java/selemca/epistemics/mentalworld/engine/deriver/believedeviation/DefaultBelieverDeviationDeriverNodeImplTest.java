@@ -13,6 +13,8 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import selemca.epistemics.mentalworld.engine.deriver.common.AbstractDeriverNodeTest;
 
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.size;
+
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriverNodeTest {
     final String DEVIATION_CRITERION = "engine.believeDeviation.criterion";
@@ -43,28 +45,28 @@ public class DefaultBelieverDeviationDeriverNodeImplTest extends AbstractDeriver
     public void testGetWillingToDeviateContributorsLowCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.2);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
-        Assert.assertEquals(4, classUnderTest.getWillingToDeviateContributors().size());
+        Assert.assertEquals(4, size(classUnderTest.getWillingToDeviateContributors()));
     }
 
     @Test
     public void testGetWillingToDeviateContributorsHighCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.8);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
-        Assert.assertEquals(1, classUnderTest.getWillingToDeviateContributors().size());
+        Assert.assertEquals(1, size(classUnderTest.getWillingToDeviateContributors()));
     }
 
     @Test
     public void testGetUnwillingToDeviateContributorsLowCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.2);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
-        Assert.assertEquals(1, classUnderTest.getUnwillingToDeviateContributors().size());
+        Assert.assertEquals(1, size(classUnderTest.getUnwillingToDeviateContributors()));
     }
 
     @Test
     public void testGetUnwillingToDeviateContributorsHighCriterion() {
         applicationSettings.setProperty(DEVIATION_CRITERION, 0.8);
         classUnderTest = new DefaultBelieverDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
-        Assert.assertEquals(4, classUnderTest.getUnwillingToDeviateContributors().size());
+        Assert.assertEquals(4, size(classUnderTest.getUnwillingToDeviateContributors()));
     }
 
 }

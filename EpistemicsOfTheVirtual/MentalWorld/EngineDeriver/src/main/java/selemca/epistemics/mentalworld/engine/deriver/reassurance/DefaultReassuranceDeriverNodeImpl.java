@@ -21,11 +21,9 @@ import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.deriver.reassurance.ReassuranceDeriverNodeSettingsProvider.*;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
 public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode {
     final int REASSURENCE_DIRECT_ASSOCIATION_MODIFICATION_PERCENTAGE_DEFAULT = 20;
     final int REASSURENCE_INDIRECT_ASSOCIATIONS_MODIFICATION_PERCENTAGE_DEFAULT = 5;
@@ -41,9 +39,9 @@ public class DefaultReassuranceDeriverNodeImpl implements ReassuranceDeriverNode
 
     private final DijkstraShortestPath<Concept, Association> dijkstraShortestPath;
 
-    public DefaultReassuranceDeriverNodeImpl(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
+    public DefaultReassuranceDeriverNodeImpl(WorkingMemory workingMemory, MentalWorldEngine.Logger logger, ConceptRepository conceptRepository, AssociationRepository associationRepository, Configuration applicationSettings) {
         this.workingMemory = workingMemory;
-        this.beliefSystemGraph = beliefSystemGraph;
+        this.beliefSystemGraph = BELIEF_SYSTEM_GRAPH.get(workingMemory).iterator().next();
         this.logger = logger;
         this.conceptRepository = conceptRepository;
         this.associationRepository = associationRepository;

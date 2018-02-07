@@ -6,7 +6,6 @@
  */
 package selemca.epistemics.mentalworld.beliefsystem.graph;
 
-import edu.uci.ics.jung.graph.Graph;
 import edu.uci.ics.jung.graph.UndirectedSparseGraph;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
@@ -22,8 +21,8 @@ public class GraphBuilder {
         this.associations = associations;
     }
 
-    public Graph<Concept, Association> build() {
-        UndirectedSparseGraph<Concept, Association> graph = new UndirectedSparseGraph<>();
+    public ConceptGraph build() {
+        ConceptGraphImpl graph = new ConceptGraphImpl();
         for (Concept concept : concepts) {
             graph.addVertex(concept);
         }
@@ -32,5 +31,8 @@ public class GraphBuilder {
         }
 
         return graph;
+    }
+
+    public class ConceptGraphImpl extends UndirectedSparseGraph<Concept,Association> implements ConceptGraph {
     }
 }

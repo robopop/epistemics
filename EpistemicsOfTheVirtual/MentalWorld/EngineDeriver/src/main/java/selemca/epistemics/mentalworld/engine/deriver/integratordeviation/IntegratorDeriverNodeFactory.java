@@ -6,20 +6,14 @@
  */
 package selemca.epistemics.mentalworld.engine.deriver.integratordeviation;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import selemca.epistemics.data.entity.Association;
-import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.factory.DeriverNodeFactory;
 import selemca.epistemics.mentalworld.engine.node.IntegratorDeviationDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
-/**
- * Created by henrizwols on 27-02-15.
- */
 @Component
 public class IntegratorDeriverNodeFactory implements DeriverNodeFactory<IntegratorDeviationDeriverNode> {
     private static final String CONFIGURATION_NAME = "integratorDeviationDeriver.default";
@@ -38,7 +32,7 @@ public class IntegratorDeriverNodeFactory implements DeriverNodeFactory<Integrat
     }
 
     @Override
-    public IntegratorDeviationDeriverNode createDeriverNode(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger) {
+    public IntegratorDeviationDeriverNode createDeriverNode(WorkingMemory workingMemory, MentalWorldEngine.Logger logger) {
         return new DefaultIntegratorDeviationDeriverNodeImpl(workingMemory, logger, applicationSettings);
     }
 }

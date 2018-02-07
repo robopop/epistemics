@@ -1,9 +1,9 @@
 package selemca.epistemics.mentalworld.engine.impl;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptGraph;
 import selemca.epistemics.mentalworld.beliefsystem.graph.GraphBuilder;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
@@ -33,15 +33,14 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.BiFunction;
 
+import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_SYSTEM_GRAPH;
 import static selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineSettingsProvider.MAXIMUM_TRAVERSALS;
 
 class VirtualModelEngineState implements MentalWorldEngineState {
-
     private final MentalWorldEngineImpl engine;
     private final WorkingMemory workingMemory;
     private final MentalWorldEngine.Logger logger;
     private Map<Class<? extends DeriverNode>, DeriverNode> deriverNodeMap = new HashMap<>();
-    private final Graph<Concept, Association> beliefSystemGraph;
     private final Collection<String> triedConcepts = new ArrayList<>();
     private boolean observationAccepted = false;
 
@@ -62,7 +61,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         this.engine = engine;
         this.workingMemory = workingMemory;
         this.logger = logger;
-        beliefSystemGraph = getGraph();
+        BELIEF_SYSTEM_GRAPH.add(workingMemory, getGraph());
     }
 
     public MentalWorldEngine.Logger getLogger() {
@@ -98,7 +97,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         }
     }
 
-    private Graph<Concept, Association> getGraph() {
+    private ConceptGraph getGraph() {
         Collection<Concept> concepts = engine.getConceptRepository().findAll();
         Collection<Association> associations = engine.getAssociationRepository().findAll();
         return new GraphBuilder(concepts, associations).build();
@@ -252,7 +251,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
             result = engine.getDeriverNodeProviderRegistry().getDeriverNodeProvider(deliverNodeClass)
                 .map(provider -> {
                     MentalWorldEngine.Logger nodeLogger = new PrefixLogger(logger, deliverNodeClass.getSimpleName() + ": ");
-                    return provider.createDeriverNode(workingMemory, beliefSystemGraph, nodeLogger);
+                    return provider.createDeriverNode(workingMemory, nodeLogger);
                 })
                 .map(node -> {
                     deriverNodeMap.put(deliverNodeClass, node);

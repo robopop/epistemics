@@ -6,12 +6,9 @@
  */
 package selemca.epistemics.mentalworld.engine.deriver.changeconcept;
 
-import edu.uci.ics.jung.graph.Graph;
 import org.apache.commons.configuration.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import selemca.epistemics.data.entity.Association;
-import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.AssociationRepository;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
@@ -43,7 +40,7 @@ public class ChangeConceptDeriverNodeFactory implements DeriverNodeFactory<Chang
     }
 
     @Override
-    public ChangeConceptDeriverNode createDeriverNode(WorkingMemory workingMemory, Graph<Concept, Association> beliefSystemGraph, MentalWorldEngine.Logger logger) {
+    public ChangeConceptDeriverNode createDeriverNode(WorkingMemory workingMemory, MentalWorldEngine.Logger logger) {
         return new DefaultChangeConceptDeriverNodeImpl(workingMemory, logger, associationRepository, beliefModelService, applicationSettings);
     }
 }

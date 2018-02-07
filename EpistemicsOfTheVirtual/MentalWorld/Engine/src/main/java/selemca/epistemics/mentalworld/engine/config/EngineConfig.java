@@ -8,8 +8,10 @@ package selemca.epistemics.mentalworld.engine.config;
 
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import selemca.epistemics.mentalworld.beliefsystem.graph.ConceptGraph;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineImpl;
+import selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind;
 
 /**
  * Spring Configuration for Engine module.
@@ -18,6 +20,8 @@ import selemca.epistemics.mentalworld.engine.impl.MentalWorldEngineImpl;
 @Configuration
 @ComponentScan({"selemca.epistemics.mentalworld.engine"})
 public class EngineConfig {
+    public static final AttributeKind<ConceptGraph> BELIEF_SYSTEM_GRAPH = AttributeKind.create(ConceptGraph.class);
+
     public MentalWorldEngine mentalWorldEngine() {
         return new MentalWorldEngineImpl();
     }

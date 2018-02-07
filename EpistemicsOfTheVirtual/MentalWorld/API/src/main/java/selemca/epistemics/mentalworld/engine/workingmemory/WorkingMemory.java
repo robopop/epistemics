@@ -10,13 +10,20 @@ import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 public class WorkingMemory {
+    private final Map<AttributeKind,Bag> attributes = new HashMap<>();
     private Set<String> observationFeatures;
     private CategoryMatch categoryMatch = null;
     private Concept newContext;
     private Engine engineSettings;
+
+    public Map<AttributeKind, Bag> getAttributes() {
+        return attributes;
+    }
 
     public Set<String> getObservationFeatures() {
         return observationFeatures;

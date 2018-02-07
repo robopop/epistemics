@@ -25,11 +25,11 @@ public interface BelieverDeviationDeriverNode extends DeriverNode {
      * Gets the observed features for which the system is willing to deviate from current belief.
      * Returned collection may be empty but is never null.
      */
-    Collection<Concept> getWillingToDeviateContributors();
+    Iterable<Concept> getWillingToDeviateContributors();
 
     /**
      * Gets the observed features for which the system is unwilling to deviate from current belief.
      * Returned collection may be empty but is never null.
      */
-    Collection<Concept> getUnwillingToDeviateContributors();
+    Iterable<Concept> getUnwillingToDeviateContributors();
 }
