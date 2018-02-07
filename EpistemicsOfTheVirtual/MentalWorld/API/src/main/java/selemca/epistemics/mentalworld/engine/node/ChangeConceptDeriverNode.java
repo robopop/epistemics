@@ -8,10 +8,7 @@ package selemca.epistemics.mentalworld.engine.node;
 
 import selemca.epistemics.data.entity.Association;
 
-/**
- * Created by henrizwols on 26-02-15.
- */
-public interface ChangeConceptDeriverNode extends DeriverNode {
+public interface ChangeConceptDeriverNode extends DeriverNode, ActionNode {
     /**
      * Change the given concept according to the given realistic contribution
      */

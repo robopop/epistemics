@@ -17,9 +17,11 @@ import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import java.util.Optional;
 
 import static selemca.epistemics.mentalworld.engine.deriver.changeconcept.ChangeConceptDeriverNodeSettingsProvider.NEW_ASSOCIATION_TRUTH_VALUE;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.ASSOCIATION;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.IS_METAPHOR;
 
 public class DefaultChangeConceptDeriverNodeImpl implements ChangeConceptDeriverNode {
-    final double NEW_ASSOSIATION_TRUTH_VALUE_DEFAULT = 0.5;
+    final double NEW_ASSOCIATION_TRUTH_VALUE_DEFAULT = 0.5;
 
     private final WorkingMemory workingMemory;
     private final MentalWorldEngine.Logger logger;
@@ -32,17 +34,27 @@ public class DefaultChangeConceptDeriverNodeImpl implements ChangeConceptDeriver
         this.logger = logger;
         this.associationRepository = associationRepository;
         this.beliefModelService = beliefModelService;
-        newAssociationTruthValue = applicationSettings.getDouble(NEW_ASSOCIATION_TRUTH_VALUE, NEW_ASSOSIATION_TRUTH_VALUE_DEFAULT);
+        newAssociationTruthValue = applicationSettings.getDouble(NEW_ASSOCIATION_TRUTH_VALUE, NEW_ASSOCIATION_TRUTH_VALUE_DEFAULT);
     }
 
     @Override
-    public void changeConcept(Association association, boolean isMetaphor) {
+    public void apply() {
+        Association association = workingMemory.get(ASSOCIATION);
+        boolean isMetaphor = workingMemory.get(IS_METAPHOR);
+
         if (getTruthValue(association) < newAssociationTruthValue) {
             logger.debug(String.format("Changed relation %s to %s", association, newAssociationTruthValue));
             beliefModelService.fullSave(association);
         }
         String relationType = isMetaphor ? "f" : "l";
         beliefModelService.setAssociationType(association.getConcept1(), association.getConcept2(),relationType);
+    }
+
+    @Override
+    public void changeConcept(Association association, boolean isMetaphor) {
+        workingMemory.set(ASSOCIATION, association);
+        workingMemory.set(IS_METAPHOR, isMetaphor);
+        apply();
     }
 
     private double getTruthValue(Association association) {

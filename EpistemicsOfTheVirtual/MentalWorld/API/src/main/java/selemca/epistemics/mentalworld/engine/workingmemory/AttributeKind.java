@@ -26,8 +26,9 @@ public class AttributeKind<T> {
     // CategoryMatchDeriveNode
     public static final AttributeKind<String> PRECLUDE_CONCEPTS = create(String.class, SET);
 
-    // SetLiteral, SetFictional, InsecurityDeriverNode
+    // SetLiteral, SetFictional, InsecurityDeriverNode, ChangeConceptDeriverNode
     public static final AttributeKind<Association> ASSOCIATION = create(Association.class);
+    public static final AttributeKind<Boolean> IS_METAPHOR = create(Boolean.class);
 
     // EpistemicAppraisalDeriverNode
     public static final AttributeKind<Concept> CATEGORY = create(Concept.class);
