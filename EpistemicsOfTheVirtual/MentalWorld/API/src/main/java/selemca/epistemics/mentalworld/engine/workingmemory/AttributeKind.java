@@ -51,7 +51,7 @@ public class AttributeKind<T> {
     }
 
     public static  <T> AttributeKind<T> create(Class<T> type, Cardinality cardinality) {
-        return new AttributeKind<T>(type, cardinality);
+        return new AttributeKind<>(type, cardinality);
     }
 
     public Iterable<T> get(WorkingMemory workingMemory) {
