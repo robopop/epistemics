@@ -6,6 +6,8 @@ import selemca.epistemics.mentalworld.engine.accept.Engine;
 import selemca.epistemics.mentalworld.engine.category.CategoryMatch;
 
 import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import static selemca.epistemics.mentalworld.engine.workingmemory.Cardinality.*;
@@ -95,5 +97,9 @@ public class AttributeKind<T> {
 
     public static long size(Iterable<?> it) {
         return StreamSupport.stream(it.spliterator(), false).count();
+    }
+
+    public static <E> Set<E> toSet(Iterable<E> iterable) {
+        return StreamSupport.stream(iterable.spliterator(), false).collect(Collectors.toSet());
     }
 }

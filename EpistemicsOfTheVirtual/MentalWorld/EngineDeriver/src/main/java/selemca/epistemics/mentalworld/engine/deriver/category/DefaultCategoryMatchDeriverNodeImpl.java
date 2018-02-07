@@ -17,7 +17,6 @@ import selemca.epistemics.mentalworld.engine.deriver.util.GraphUtil;
 import selemca.epistemics.mentalworld.engine.node.CategoryMatchDeriverNode;
 import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -27,6 +26,7 @@ import static selemca.epistemics.mentalworld.engine.config.EngineConfig.BELIEF_S
 import static selemca.epistemics.mentalworld.engine.deriver.context.ContextDeriverNodeSettingsProvider.CONTEXT_ASSOCIATION_MAXIMUM_DISTANCE;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.CATEGORY_MATCH;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.OBSERVATION_FEATURES;
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.PRECLUDE_CONCEPTS;
 import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.size;
 
 public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriverNode {
@@ -47,26 +47,32 @@ public class DefaultCategoryMatchDeriverNodeImpl implements CategoryMatchDeriver
     }
 
     @Override
-    public boolean categoryMatch(Collection<String> precludeConcepts) {
-
+    public boolean decide() {
+        Iterable<String> precludeConcepts = workingMemory.getAll(PRECLUDE_CONCEPTS);
         Iterable<String> observationFeatures = workingMemory.getAll(OBSERVATION_FEATURES);
         ConceptGraph beliefSystemGraph = workingMemory.get(BELIEF_SYSTEM_GRAPH);
         Optional<CategoryMatch> categoryMatchOptional = categoryMatcher.findMatch(beliefSystemGraph, observationFeatures, precludeConcepts, logger);
         return categoryMatchOptional
-            .map(foundMatch -> {
-                workingMemory.set(CATEGORY_MATCH, foundMatch);
-                logger.debug(foundMatch.toString());
+                .map(foundMatch -> {
+                    workingMemory.set(CATEGORY_MATCH, foundMatch);
+                    logger.debug(foundMatch.toString());
 
-                boolean match = foundMatch.getContributors().size() == size(observationFeatures);
-                match &= withinContext(foundMatch);
-                match &= allObservationsWithinReality();
-                logger.debug("Match is " + (match ? "valid." : "invalid."));
-                return match;
-            })
-            .orElseGet(() -> {
-                logger.debug("No match found.");
-                return false;
-            });
+                    boolean match = foundMatch.getContributors().size() == size(observationFeatures);
+                    match &= withinContext(foundMatch);
+                    match &= allObservationsWithinReality();
+                    logger.debug("Match is " + (match ? "valid." : "invalid."));
+                    return match;
+                })
+                .orElseGet(() -> {
+                    logger.debug("No match found.");
+                    return false;
+                });
+    }
+
+    @Override
+    public boolean categoryMatch(Iterable<String> precludeConcepts) {
+        workingMemory.set(PRECLUDE_CONCEPTS, precludeConcepts);
+        return decide();
     }
 
     private boolean withinContext(CategoryMatch categoryMatch) {

@@ -11,10 +11,9 @@ import selemca.epistemics.data.entity.Association;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 
-import java.util.Collection;
 import java.util.Optional;
 
 public interface CategoryMatcher {
     Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, MentalWorldEngine.Logger logger);
-    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger);
+    Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Iterable<String> precludeConcepts, MentalWorldEngine.Logger logger);
 }

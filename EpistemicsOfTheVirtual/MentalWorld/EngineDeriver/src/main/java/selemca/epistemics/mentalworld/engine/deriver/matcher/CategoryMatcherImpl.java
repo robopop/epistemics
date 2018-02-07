@@ -19,9 +19,17 @@ import selemca.epistemics.mentalworld.engine.deriver.util.GraphUtil;
 import selemca.epistemics.mentalworld.engine.realitycheck.RealityCheck;
 import selemca.epistemics.mentalworld.registry.RealityCheckRegistry;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
+
+import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.toSet;
 
 @Component("categoryMatcher.default")
 public class CategoryMatcherImpl implements CategoryMatcher {
@@ -36,14 +44,14 @@ public class CategoryMatcherImpl implements CategoryMatcher {
     }
 
     @Override
-    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger) {
+    public Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features, Iterable<String> precludeConcepts, MentalWorldEngine.Logger logger) {
         Set<Concept> featureConcepts = getFeatureConcepts(beliefSystemGraph, features);
         Set<Concept> candidateMatches = getVicinity(beliefSystemGraph, featureConcepts);
         return findMatch(beliefSystemGraph, candidateMatches, featureConcepts, precludeConcepts, logger);
     }
 
     private Set<Concept> getFeatureConcepts(Graph<Concept, Association> beliefSystemGraph, Iterable<String> features) {
-        Set<String> featureSet = StreamSupport.stream(features.spliterator(), false).collect(Collectors.toSet());
+        Set<String> featureSet = toSet(features);
         Set<Concept> concepts = new HashSet<>();
         for (Concept concept : beliefSystemGraph.getVertices()) {
             if (featureSet.contains(concept.getName())) {
@@ -61,13 +69,14 @@ public class CategoryMatcherImpl implements CategoryMatcher {
         return neighbors;
     }
 
-    private Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Collection<Concept> candidateMatches, Set<Concept> featureConcepts, Collection<String> precludeConcepts, MentalWorldEngine.Logger logger) {
+    private Optional<CategoryMatch> findMatch(Graph<Concept, Association> beliefSystemGraph, Collection<Concept> candidateMatches, Set<Concept> featureConcepts, Iterable<String> precludeConcepts, MentalWorldEngine.Logger logger) {
+        Set<String> precludeConceptSet = toSet(precludeConcepts);
         RealityCheck realityCheck = getRealityCheck();
         DijkstraShortestPath<Concept, Association> dijkstraDistance = new DijkstraShortestPath<>(beliefSystemGraph);
 
         SortedSet<CategoryMatchImpl> matches = new TreeSet<>(new CategoryScoreComparator());
         for (Concept cadidateMatch : candidateMatches) {
-            if (!precludeConcepts.contains(cadidateMatch.getName())) {
+            if (!precludeConceptSet.contains(cadidateMatch.getName())) {
                 matches.add(match(dijkstraDistance, cadidateMatch, featureConcepts, realityCheck));
             }
         }
