@@ -10,9 +10,7 @@ import org.apache.commons.collections15.IteratorUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,7 +29,6 @@ import selemca.epistemics.mentalworld.engine.workingmemory.WorkingMemory;
 import selemca.epistemics.mentalworld.rest.util.LoggerImpl;
 
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.BadRequestException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.NotFoundException;
 import javax.ws.rs.Produces;
@@ -40,7 +37,6 @@ import java.lang.invoke.MethodHandles;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 
 import static java.lang.String.format;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -51,15 +47,12 @@ import static selemca.epistemics.mentalworld.engine.workingmemory.AttributeKind.
 
 @RestController
 @RequestMapping(MentalWorldRestController.PATH_PREFIX)
-public class MentalWorldRestController {
+public class MentalWorldRestController extends AbstractRestController {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final MentalWorldEngine.Logger LOGGER = new EngineLogger();
-    protected static final String APPRAISALS_ATTRIBUTE = "APPRAISALS";
     protected static final String PATH_PREFIX = "/epistemics";
     protected static final String PATH_ACCEPT_OBSERVATION = "/accept-observation";
     protected static final String PATH_APPRAISAL = "/appraisal";
-    protected static final String PATH_ID_NAME = "id";
-    protected static final String PATH_ID_PART = "/{" + PATH_ID_NAME + "}";
     protected static final String CONCEPT_ID_PARAM = "conceptId";
     protected static final String PATH_ENGINE_SETTINGS = "/engine-settings";
     protected static final String PATH_OBSERVATION_FEATURES = "/observation-features";
@@ -70,6 +63,9 @@ public class MentalWorldRestController {
     private MentalWorldEngine mentalWorldEngine;
 
     @Autowired
+    private MentalWorldService mentalWorldService;
+
+    @Autowired
     private ConceptRepository conceptRepository;
 
     /*
@@ -78,6 +74,7 @@ public class MentalWorldRestController {
     @RequestMapping(value = PATH_ACCEPT_OBSERVATION, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     @ResponseBody
     public boolean acceptObservation(@RequestBody Request request) {
+        LOG.info("Accept observation");
         Set<String> observationFeatures = new HashSet<>(request.getFeatureList());
         Engine engineSettings = request.getEngineSettings();
         return mentalWorldEngine.acceptObservation(observationFeatures, engineSettings, LOGGER);
@@ -86,9 +83,7 @@ public class MentalWorldRestController {
     @RequestMapping(value = PATH_APPRAISAL, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)
     public ResponseEntity<Void> createAppraisal(HttpSession httpSession, UriComponentsBuilder uriComponentsBuilder) {
         AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        String appraisalId = UUID.randomUUID().toString();
-        MentalWorldEngine.Logger logger = new LoggerImpl();
-        appraisals.put(appraisalId, mentalWorldEngine.createState(logger));
+        String appraisalId = mentalWorldService.createAppraisal(appraisals);
         UriComponents uriComponents = uriComponentsBuilder.path(PATH_PREFIX + PATH_APPRAISAL + "/{id}").buildAndExpand(appraisalId);
         return ResponseEntity.created(uriComponents.toUri()).build();
     }
@@ -205,35 +200,5 @@ public class MentalWorldRestController {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         LoggerImpl logger = (LoggerImpl) engineState.getLogger();
         return IteratorUtils.toList(logger.iterator());
-    }
-
-    protected MentalWorldEngineState getEngineState(String appraisalId, HttpSession httpSession) {
-        AppraisalsMap appraisals = getAppraisalsMap(httpSession);
-        MentalWorldEngineState engineState = appraisals.get(appraisalId);
-        if (engineState == null) {
-            throw new NotFoundException(format("Engine state: %s", appraisalId));
-        }
-        return engineState;
-    }
-
-    protected AppraisalsMap getAppraisalsMap(HttpSession httpSession) {
-        AppraisalsMap appraisals = (AppraisalsMap) httpSession.getAttribute(APPRAISALS_ATTRIBUTE);
-        if (appraisals == null) {
-            appraisals = new AppraisalsMap();
-            httpSession.setAttribute(APPRAISALS_ATTRIBUTE, appraisals);
-        }
-        return appraisals;
-    }
-
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<?> handleNotFoundException(NotFoundException exception) {
-        LOG.warn("Not found: {}", String.valueOf(exception));
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-    }
-
-    @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<?> handleBadRequestException(BadRequestException exception) {
-        LOG.warn("Bad request: {}", String.valueOf(exception));
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 }

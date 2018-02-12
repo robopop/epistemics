@@ -44,19 +44,33 @@ then
     curl -sS -D - -X POST -F "file=@${IMPORT_FILE}" 'http://localhost:8888/beliefsystem-rest/epistemics/belief-system'
 fi
 
-function curl-appraisal() {
+function curl-mental-world() {
     local URL_PATH="$1"
     shift
-    local URL="http://localhost:8888/mentalworld-rest/epistemics/appraisal${URL_PATH}"
+    local URL="http://localhost:8888/mentalworld-rest${URL_PATH}"
     echo "URL=[${URL}]" >&2
     local JSON_MIME='application/json'
     curl -sS -D - --header "Content-Type: ${JSON_MIME}" --header "Accept: ${JSON_MIME}" "$@" "${URL}" | tr -d '\015'
 }
 function post-appraisal() {
-    curl-appraisal "$@" -X POST
+    local URL_PATH="$1"
+    shift
+    curl-mental-world "/epistemics/appraisal${URL_PATH}" "$@" -X POST
 }
 function get-appraisal() {
-    curl-appraisal "$@" -X GET
+    local URL_PATH="$1"
+    shift
+    curl-mental-world "/epistemics/appraisal${URL_PATH}" "$@" -X GET
+}
+function post-node() {
+    local URL_PATH="$1"
+    shift
+    curl-mental-world "/epistemics-node/node${URL_PATH}" "$@" -X POST
+}
+function get-node() {
+    local URL_PATH="$1"
+    shift
+    curl-mental-world "/epistemics-node/node${URL_PATH}" "$@" -X GET
 }
 
 ENGINE_SETTINGS='{
@@ -134,7 +148,9 @@ curl -sS -D - "http://localhost:8888/mentalworld-rest/epistemics/appraisal/${APP
 get-appraisal "/${APPRAISAL_ID}/new-context" -b "${COOKIE_JAR}" \
     | post-process
 
-post-appraisal "/${APPRAISAL_ID}/accept-observation" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
+post-node "/${APPRAISAL_ID}/decide/CategoryMatch" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
+
+post-node "/${APPRAISAL_ID}/decide/ContextMatch" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
 
 get-appraisal "/${APPRAISAL_ID}/log-messages" -b "${COOKIE_JAR}" \
     | post-process -a

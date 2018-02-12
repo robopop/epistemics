@@ -253,7 +253,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
         logger.info(String.format("Rejecting a relation between %s and %s", association.getConcept1(), association.getConcept2()));
     }
 
-    private <D extends DeriverNode> Optional<D> getDeriverNode(Class<D> deliverNodeClass) {
+    public <D extends DeriverNode> Optional<D> getDeriverNode(Class<D> deliverNodeClass) {
         Optional<D> result = Optional.ofNullable(deriverNodeMap.get(deliverNodeClass)).map(deliverNodeClass::cast);
 
         if (!result.isPresent()) {
