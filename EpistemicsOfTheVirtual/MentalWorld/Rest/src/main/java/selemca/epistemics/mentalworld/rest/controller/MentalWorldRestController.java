@@ -21,6 +21,7 @@ import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 import selemca.epistemics.data.entity.Concept;
 import selemca.epistemics.mentalworld.beliefsystem.repository.ConceptRepository;
+import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngine;
 import selemca.epistemics.mentalworld.engine.MentalWorldEngineState;
 import selemca.epistemics.mentalworld.engine.accept.Engine;
@@ -51,6 +52,7 @@ public class MentalWorldRestController extends AbstractRestController {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private static final MentalWorldEngine.Logger LOGGER = new EngineLogger();
     protected static final String PATH_PREFIX = "/epistemics";
+    protected static final String PATH_CONTEXT = "/context";
     protected static final String PATH_ACCEPT_OBSERVATION = "/accept-observation";
     protected static final String PATH_APPRAISAL = "/appraisal";
     protected static final String CONCEPT_ID_PARAM = "conceptId";
@@ -64,6 +66,9 @@ public class MentalWorldRestController extends AbstractRestController {
 
     @Autowired
     private MentalWorldService mentalWorldService;
+
+    @Autowired
+    private BeliefModelService beliefModelService;
 
     @Autowired
     private ConceptRepository conceptRepository;
@@ -181,6 +186,11 @@ public class MentalWorldRestController extends AbstractRestController {
         MentalWorldEngineState engineState = getEngineState(appraisalId, httpSession);
         WorkingMemory workingMemory = engineState.getWorkingMemory();
         return workingMemory.get(NEW_CONTEXT);
+    }
+
+    @RequestMapping(value = PATH_CONTEXT, method = DELETE)
+    public void resetContext() {
+        beliefModelService.resetContext();
     }
 
     @RequestMapping(value = PATH_APPRAISAL + PATH_ID_PART + PATH_ACCEPT_OBSERVATION, method = POST, consumes = APPLICATION_JSON, produces = APPLICATION_JSON)

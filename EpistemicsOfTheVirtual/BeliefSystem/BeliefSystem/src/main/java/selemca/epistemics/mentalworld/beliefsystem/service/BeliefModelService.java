@@ -67,12 +67,17 @@ public interface BeliefModelService {
     // CONTEXT
 
     /**
-     * Set the current context
+     * Sets the current context
      */
     void setContext(String context);
 
     /**
-     * Get the current context
+     * Resets the current context
+     */
+    void resetContext();
+
+    /**
+     * Gets the current context
      */
     Optional<Concept> getContext();
 

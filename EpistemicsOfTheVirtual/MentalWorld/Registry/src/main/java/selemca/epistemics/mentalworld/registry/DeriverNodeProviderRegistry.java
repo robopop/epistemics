@@ -74,7 +74,7 @@ public class DeriverNodeProviderRegistry {
 
     public <D extends DeriverNode> Optional<DeriverNodeFactory<D>> getDeriverNodeProvider(Class<D> deriverNodeClass) {
         RegistryKey deriverNodeConfigurationKey = deriverNodeConfigurationKeys.get(deriverNodeClass);
-        String configuredImplementation = applicationSettings.getString(deriverNodeConfigurationKey.getKey());
+        String configuredImplementation = deriverNodeConfigurationKey == null ? null : applicationSettings.getString(deriverNodeConfigurationKey.getKey());
 
         DeriverNodeFactory<D> result = null;
         Set<DeriverNodeFactory<D>> implementations = getAllImplementations(deriverNodeClass);

@@ -354,6 +354,13 @@ public class BeliefSystemRestController {
         beliefModelService.setContext(context);
     }
 
+    @RequestMapping(value = SERVLET_CONTEXT, method = DELETE)
+    @Consumes(MediaType.TEXT_PLAIN)
+    public void resetCurrentContext() {
+        LOG.info("Resetting current context");
+        beliefModelService.resetContext();
+    }
+
     @RequestMapping(value = SERVLET_BELIEF_SYSTEM + "/test", method = POST)
     public void testImportBeliefSystem(@RequestParam("file") MultipartFile multipartFile) throws IOException {
         LOG.info("Testing import of belief system");

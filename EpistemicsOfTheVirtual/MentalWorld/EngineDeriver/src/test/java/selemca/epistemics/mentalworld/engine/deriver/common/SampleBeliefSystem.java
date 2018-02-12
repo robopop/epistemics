@@ -294,6 +294,11 @@ public class SampleBeliefSystem {
         }
 
         @Override
+        public void resetContext() {
+            currentContext = null;
+        }
+
+        @Override
         public boolean isContextConcept(Concept concept) {
             return Arrays.asList(new String[]{"circus", "metro", "nature"}).contains(concept.getName());
         }

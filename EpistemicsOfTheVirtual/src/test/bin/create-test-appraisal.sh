@@ -44,13 +44,18 @@ then
     curl -sS -D - -X POST -F "file=@${IMPORT_FILE}" 'http://localhost:8888/beliefsystem-rest/epistemics/belief-system'
 fi
 
-function curl-appraisal() {
+function curl-rest() {
     local URL_PATH="$1"
     shift
-    local URL="http://localhost:8888/mentalworld-rest/epistemics/appraisal${URL_PATH}"
+    local URL="http://localhost:8888${URL_PATH}"
     echo "URL=[${URL}]" >&2
     local JSON_MIME='application/json'
     curl -sS -D - --header "Content-Type: ${JSON_MIME}" --header "Accept: ${JSON_MIME}" "$@" "${URL}" | tr -d '\015'
+}
+function curl-appraisal() {
+    local URL_PATH="$1"
+    shift
+    curl-rest "/mentalworld-rest/epistemics/appraisal${URL_PATH}" "$@"
 }
 function post-appraisal() {
     curl-appraisal "$@" -X POST
@@ -107,11 +112,10 @@ ENGINE_SETTINGS='{
 
 COOKIE_JAR="${PREFIX}cookies"
 
-function create-appraisal() {
-    post-appraisal '' -c "${COOKIE_JAR}" | sed -n -e 's/^[Ll]ocation:.*\///p'
-}
-
-APPRAISAL_ID="$(create-appraisal)"
+RESULT="$(post-appraisal '' -c "${COOKIE_JAR}")"
+SESSION_ID="$(echo "${RESULT}" | sed -n -e 's/; .*//' -e 's/^[Ss]et-[Cc]ookie:.*JSESSIONID=//p')"
+APPRAISAL_ID="$(echo "${RESULT}" | sed -n -e 's/^[Ll]ocation:.*\///p')"
+SESSION_ID="$(echo "${RESULT}" | head -1)"
 if [ -z "${APPRAISAL_ID}" ]
 then
     echo "No appraisal ID" >&2
@@ -120,7 +124,9 @@ fi
 
 echo "APPRAISAL_ID=[${APPRAISAL_ID}]"
 
-post-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" -d "${ENGINE_SETTINGS}"
+curl-rest '/mentalworld-rest/epistemics/context' -X DELETE
+
+post-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" -d
 get-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" \
     | post-process
 

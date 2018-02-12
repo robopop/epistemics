@@ -44,10 +44,10 @@ then
     curl -sS -D - -X POST -F "file=@${IMPORT_FILE}" 'http://localhost:8888/beliefsystem-rest/epistemics/belief-system'
 fi
 
-function curl-mental-world() {
+function curl-rest() {
     local URL_PATH="$1"
     shift
-    local URL="http://localhost:8888/mentalworld-rest${URL_PATH}"
+    local URL="http://localhost:8888${URL_PATH}"
     echo "URL=[${URL}]" >&2
     local JSON_MIME='application/json'
     curl -sS -D - --header "Content-Type: ${JSON_MIME}" --header "Accept: ${JSON_MIME}" "$@" "${URL}" | tr -d '\015'
@@ -55,22 +55,22 @@ function curl-mental-world() {
 function post-appraisal() {
     local URL_PATH="$1"
     shift
-    curl-mental-world "/epistemics/appraisal${URL_PATH}" "$@" -X POST
+    curl-rest "/mentalworld-rest/epistemics/appraisal${URL_PATH}" "$@" -X POST
 }
 function get-appraisal() {
     local URL_PATH="$1"
     shift
-    curl-mental-world "/epistemics/appraisal${URL_PATH}" "$@" -X GET
+    curl-rest "/mentalworld-rest/epistemics/appraisal${URL_PATH}" "$@" -X GET
 }
 function post-node() {
     local URL_PATH="$1"
     shift
-    curl-mental-world "/epistemics-node/node${URL_PATH}" "$@" -X POST
+    curl-rest "/mentalworld-rest/epistemics-node/node${URL_PATH}" "$@" -X POST
 }
 function get-node() {
     local URL_PATH="$1"
     shift
-    curl-mental-world "/epistemics-node/node${URL_PATH}" "$@" -X GET
+    curl-rest "/mentalworld-rest/epistemics-node/node${URL_PATH}" "$@" -X GET
 }
 
 ENGINE_SETTINGS='{
@@ -134,6 +134,8 @@ fi
 
 echo "APPRAISAL_ID=[${APPRAISAL_ID}]"
 
+curl-rest '/mentalworld-rest/epistemics/context' -X DELETE
+
 post-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" -d "${ENGINE_SETTINGS}"
 get-appraisal "/${APPRAISAL_ID}/engine-settings" -b "${COOKIE_JAR}" \
     | post-process
@@ -151,6 +153,10 @@ get-appraisal "/${APPRAISAL_ID}/new-context" -b "${COOKIE_JAR}" \
 post-node "/${APPRAISAL_ID}/decide/CategoryMatch" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
 
 post-node "/${APPRAISAL_ID}/decide/ContextMatch" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
+
+post-node "/${APPRAISAL_ID}/action/DeclareContext" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
+
+post-node "/${APPRAISAL_ID}/decide/CategoryMatch" -b "${COOKIE_JAR}" | sed "${SED_EXT}" -e '$s/^/Result: /'
 
 get-appraisal "/${APPRAISAL_ID}/log-messages" -b "${COOKIE_JAR}" \
     | post-process -a

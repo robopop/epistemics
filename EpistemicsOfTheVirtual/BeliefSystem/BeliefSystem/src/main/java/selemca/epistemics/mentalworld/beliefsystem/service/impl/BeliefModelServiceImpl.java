@@ -6,6 +6,7 @@
  */
 package selemca.epistemics.mentalworld.beliefsystem.service.impl;
 
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import selemca.epistemics.data.entity.*;
 import selemca.epistemics.mentalworld.beliefsystem.repository.*;
 import selemca.epistemics.mentalworld.beliefsystem.service.BeliefModelService;
 
+import java.lang.invoke.MethodHandles;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -20,6 +22,7 @@ import java.util.stream.Collectors;
 @Component("beliefModelService")
 @Primary
 public class BeliefModelServiceImpl implements BeliefModelService {
+    private static final org.slf4j.Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
     @Autowired
     private ConceptRepository conceptRepository;
@@ -167,6 +170,7 @@ public class BeliefModelServiceImpl implements BeliefModelService {
 
     @Override
     public void setContext(String context) {
+        LOG.info("Set context: {}", context == null ? "null" : '"' + context + '"');
         Optional<OwnState> ownStatePropertyOptional = ownStateRepository.findOne(CONTEXT_PROPERTY);
         OwnState ownStateProperty = ownStatePropertyOptional.orElse(new OwnState(CONTEXT_PROPERTY));
         ownStateProperty.setValue(context);
@@ -174,8 +178,17 @@ public class BeliefModelServiceImpl implements BeliefModelService {
     }
 
     @Override
+    public void resetContext() {
+        Optional<OwnState> ownStateOptional = ownStateRepository.findOne(CONTEXT_PROPERTY);
+        ownStateOptional.ifPresent(ownStateRepository::delete);
+    }
+
+    @Override
     public Optional<Concept> getContext() {
-        return getOwnStateValue(CONTEXT_PROPERTY).flatMap((Function<String,Optional<Concept>>) conceptRepository::findOne);
+        Optional<Concept> result = getOwnStateValue(CONTEXT_PROPERTY).flatMap((Function<String,Optional<Concept>>) conceptRepository::findOne);
+        result.map(context -> { LOG.info("Get context: [{}]", context); return context; })
+                .orElseGet(() -> { LOG.info("Get context: NONE"); return null;});
+        return result;
     }
 
     private Optional<String> getOwnStateValue(String property) {

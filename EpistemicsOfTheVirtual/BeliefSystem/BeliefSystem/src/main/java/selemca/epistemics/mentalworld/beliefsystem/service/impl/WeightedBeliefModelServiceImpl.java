@@ -121,6 +121,11 @@ public class WeightedBeliefModelServiceImpl implements WeightedBeliefModelServic
     }
 
     @Override
+    public void resetContext() {
+        delegateBeliefModelService.resetContext();
+    }
+
+    @Override
     public Optional<Concept> getContext() {
         return delegateBeliefModelService.getContext();
     }
