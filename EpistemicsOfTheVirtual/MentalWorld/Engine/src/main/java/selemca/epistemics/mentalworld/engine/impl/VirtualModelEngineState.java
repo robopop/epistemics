@@ -57,6 +57,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
                 });
     }
 
+    @SuppressWarnings("unused")
     public VirtualModelEngineState(MentalWorldEngineImpl engine, Concept context, Set<String> observationFeatures, Engine engineSettings, MentalWorldEngine.Logger logger) {
         this(engine, createWorkingMemory(context, observationFeatures, engineSettings), logger);
     }
@@ -181,7 +182,7 @@ class VirtualModelEngineState implements MentalWorldEngineState {
     }
 
     private void falsification(Concept concept, Iterable<Association> realisticContributions) {
-        logger.info("Falsification");
+        logger.info("Falsification: %s", concept);
         realisticContributions.forEach(this::insecurity);
         for (Association association : realisticContributions) {
             changeConcept(association, false);

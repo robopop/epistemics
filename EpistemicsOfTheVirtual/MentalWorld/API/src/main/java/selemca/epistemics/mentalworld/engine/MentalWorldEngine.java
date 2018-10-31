@@ -18,12 +18,32 @@ public interface MentalWorldEngine {
 
     MentalWorldEngineState createState(Logger logger);
 
-    public interface Logger {
+    interface Logger {
 
-        public void debug(String message);
+        void debug(String message);
+        default void debug(String message, Object first, Object... more) {
+            debug(format(message, first, more));
+        }
 
-        public void info(String message);
+        void info(String message);
+        default void info(String message, Object first, Object... more) {
+            info(format(message, first, more));
+        }
 
-        public void warning(String message);
+        void warning(String message);
+        default void warning(String message, Object first, Object... more) {
+            warning(format(message, first, more));
+        }
+
+        default String format(String template, Object first, Object... more) {
+            if (more.length < 1) {
+                return String.format(template, first);
+            } else {
+                Object[] parameters = new Object[more.length + 1];
+                parameters[0] = first;
+                System.arraycopy(more, 0, parameters, 1, more.length);
+                return String.format(template, parameters);
+            }
+        }
     }
 }
