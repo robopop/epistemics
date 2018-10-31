@@ -22,7 +22,7 @@
 
     <properties>
         <epistemics-data-entities.version>1.3.0-SNAPSHOT</epistemics-data-entities.version>
-        <springframework.version>4.1.4.RELEASE</springframework.version>
+        <springframework.version>4.3.1.RELEASE</springframework.version>
         <slf4j.version>1.6.6</slf4j.version>
         <jackson-version>2.8.11</jackson-version>
     </properties>
@@ -72,6 +72,16 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-core</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
                 <version>${springframework.version}</version>
             </dependency>
             <dependency>
