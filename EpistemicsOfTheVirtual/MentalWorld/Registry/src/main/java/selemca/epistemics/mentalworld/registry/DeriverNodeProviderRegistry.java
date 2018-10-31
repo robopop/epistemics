@@ -51,20 +51,11 @@ public class DeriverNodeProviderRegistry {
         java.util.logging.Logger.getLogger(getClass().getSimpleName()).info(message.toString());
     }
 
-    public Set<String> getAllImplementationsNames(Class<? extends DeriverNode> deriverNodeClass) {
-        Set<String> result = new HashSet<>();
-        for (DeriverNodeFactory<?> deriverNodeFactory : getAllImplementations(deriverNodeClass)) {
-            result.add(deriverNodeFactory.getName());
-        }
-
-        return result;
-    }
-
+    @SuppressWarnings("unchecked")
     private <D extends DeriverNode> Set<DeriverNodeFactory<D>> getAllImplementations(Class<D> deriverNodeClass) {
         Set<DeriverNodeFactory<D>> result = new HashSet<>();
         for (DeriverNodeFactory<?> deriverNodeFactory : deriverNodeFactories) {
             if (deriverNodeClass.equals(deriverNodeFactory.getDeriverNodeClass())) {
-                //noinspection unchecked
                 result.add((DeriverNodeFactory<D>) deriverNodeFactory);
             }
         }
